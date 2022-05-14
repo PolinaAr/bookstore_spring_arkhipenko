@@ -1,0 +1,23 @@
+img {
+    width: 10%;
+    height: 10%;
+}
+
+.topPanel {
+    background-color: rgb(248, 238, 249);
+    border-radius: 3px;
+    display: block;
+    box-shadow: 3px 3px 7px rgb(230, 213, 232);
+    opacity: 0.9;
+}
+
+h1 {
+    font-size: 50px;
+    color: rgb(35, 14, 109);
+    padding-left: 200px;
+    margin: 0px;
+}
+
+body {
+    background-image: url(pictures/back.jpg);
+}
