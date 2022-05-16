@@ -17,16 +17,16 @@ public class CommandFactory {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ContextController.class);
         System.out.println("-----------------create context------------------");
         UserCommand userCommand = context.getBean("userCommand", UserCommand.class);
+        BookCommand bookCommand = context.getBean("bookCommand", BookCommand.class);
     }
 
     public static CommandFactory getInstance() {
         return Holder.instance;
     }
 
-    private static Map<String, Command> map = new HashMap<>();
+    private static final Map<String, Command> map = new HashMap<>();
 
-    static {
-        map.put("book", new BookCommand());
+    static {map.put("book", new BookCommand());
         map.put("books", new BooksCommand());
         map.put("user", new UserCommand());
         map.put("users", new UsersCommand());

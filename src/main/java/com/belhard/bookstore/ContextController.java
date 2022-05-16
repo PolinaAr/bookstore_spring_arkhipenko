@@ -1,10 +1,9 @@
 package com.belhard.bookstore;
 
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-@Component
+@Configuration
 @ComponentScan()
-
 public class ContextController {
 }
