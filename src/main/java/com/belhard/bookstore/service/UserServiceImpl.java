@@ -2,24 +2,36 @@ package com.belhard.bookstore.service;
 
 import com.belhard.bookstore.dao.User;
 import com.belhard.bookstore.dao.UserDao;
-import com.belhard.bookstore.dao.UserDaoJdbcImpl;
 import com.belhard.bookstore.exceptions.UserException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service("userService")
 public class UserServiceImpl implements UserService {
 
     private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
-    private final UserDao USER_DAO = new UserDaoJdbcImpl();
+    private UserDao userDao;
+
+    public UserServiceImpl() {
+        System.out.println("Create constructor UserService");
+    }
+
+    @Autowired
+    public void setUserDao(UserDao userDao) {
+        System.out.println("Set userDao to UserService");
+        this.userDao = userDao;
+    }
 
     @Override
     public List<UserDto> getAllUsers() {
         logger.debug("Call method getAllUsers");
         List<UserDto> userDtos = new ArrayList<>();
-        List<User> users = USER_DAO.getAllUsers();
+        List<User> users = userDao.getAllUsers();
         for (User user : users) {
             userDtos.add(toDto(user));
         }
@@ -41,7 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long id) {
         logger.debug("Call method getUserById");
-        User user = USER_DAO.getUserById(id);
+        User user = userDao.getUserById(id);
         if (user == null) {
             throw new UserException("There is no user with id = " + id);
         }
@@ -51,7 +63,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserByEmail(String email) {
         logger.debug("Call method getUserByEmail");
-        User user = USER_DAO.getUserByEmail(email);
+        User user = userDao.getUserByEmail(email);
         if (user == null) {
             throw new UserException("There is no user with email = " + email);
         }
@@ -61,7 +73,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getUserByLastName(String lastName) {
         logger.debug("Call method getUserByLastName");
-        List<User> users = USER_DAO.getUserByLastName(lastName);
+        List<User> users = userDao.getUserByLastName(lastName);
         List<UserDto> userDtos = new ArrayList<>();
         for (User user : users) {
             userDtos.add(toDto(user));
@@ -73,12 +85,12 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
         logger.debug("Call method createUser");
         User userToCreate = toUser(userDto);
-        User existing = USER_DAO.getUserByEmail(userToCreate.getEmail());
+        User existing = userDao.getUserByEmail(userToCreate.getEmail());
         if (existing != null) {
             throw new UserException("This user is already exist.");
         }
-        User createdUser = USER_DAO.createUser(userToCreate);
-        if (createdUser == null){
+        User createdUser = userDao.createUser(userToCreate);
+        if (createdUser == null) {
             throw new UserException("The user is not created");
         }
         UserDto createdUserDto = toDto(createdUser);
@@ -101,11 +113,11 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto) {
         logger.debug("Call method updateUser");
         User userToUpdate = toUser(userDto);
-        User existing = USER_DAO.getUserByEmail(userToUpdate.getEmail());
+        User existing = userDao.getUserByEmail(userToUpdate.getEmail());
         if (existing != null && !existing.getEmail().equals(userDto.getEmail())) {
             throw new UserException("You can't update this user. User with email " + userDto.getEmail() + " is already exist");
         }
-        User updatedUser = USER_DAO.updateUser(userToUpdate);
+        User updatedUser = userDao.updateUser(userToUpdate);
         if (updatedUser == null) {
             throw new UserException("The user is not updated.");
         }
@@ -116,7 +128,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         logger.debug("Call method deleteUser");
-        if (!USER_DAO.deleteUser(id)) {
+        if (!userDao.deleteUser(id)) {
             throw new UserException("The user is not deleted");
         }
     }
@@ -135,6 +147,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public int countAllUsers() {
         logger.debug("Call method countAllUsers");
-        return USER_DAO.countAllUsers();
+        return userDao.countAllUsers();
     }
 }

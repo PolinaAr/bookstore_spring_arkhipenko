@@ -5,10 +5,10 @@ import com.belhard.bookstore.service.BookDto;
 import com.belhard.bookstore.service.BookService;
 import com.belhard.bookstore.service.BookServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Controller;
 
 import java.util.List;
+
 
 public class BooksCommand implements Command {
 

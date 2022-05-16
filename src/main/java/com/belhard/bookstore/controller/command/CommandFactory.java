@@ -1,10 +1,8 @@
 package com.belhard.bookstore.controller.command;
 
-import com.belhard.bookstore.controller.command.impl.BookCommand;
-import com.belhard.bookstore.controller.command.impl.BooksCommand;
-import com.belhard.bookstore.controller.command.impl.ErrorCommand;
-import com.belhard.bookstore.controller.command.impl.UserCommand;
-import com.belhard.bookstore.controller.command.impl.UsersCommand;
+import com.belhard.bookstore.ContextController;
+import com.belhard.bookstore.controller.command.impl.*;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +14,9 @@ public class CommandFactory {
     }
 
     private CommandFactory() {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ContextController.class);
+        System.out.println("-----------------create context------------------");
+        UserCommand userCommand = context.getBean("userCommand", UserCommand.class);
     }
 
     public static CommandFactory getInstance() {
@@ -35,7 +36,7 @@ public class CommandFactory {
 
     public Command getCommand(String action) {
         Command command = map.get(action);
-        if (command == null){
+        if (command == null) {
             return map.get("error");
         }
         return command;

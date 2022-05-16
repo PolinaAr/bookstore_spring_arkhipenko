@@ -4,6 +4,7 @@ import com.belhard.bookstore.util.DbConfigurator;
 import com.belhard.bookstore.exceptions.BookException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository("bookDao")
 public class BookDaoJdbcImpl implements BookDao {
+
+    public BookDaoJdbcImpl() {
+        System.out.println("Create constructor bookDao");
+    }
 
     private static final Logger logger = LogManager.getLogger(BookDaoJdbcImpl.class);
     public static final String GET_ALL = "SELECT b.id, b.isbn, b.title, b.author, b.pages, c.name AS cover, b.price FROM books b " +

@@ -1,20 +1,23 @@
 package com.belhard.bookstore.dao;
 
-import com.belhard.bookstore.util.DbConfigurator;
 import com.belhard.bookstore.exceptions.UserException;
+import com.belhard.bookstore.util.DbConfigurator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("userDao")
 public class UserDaoJdbcImpl implements UserDao {
+
+    public UserDaoJdbcImpl() {
+        System.out.println("Create constructor userDao");
+    }
 
     private static final Logger logger = LogManager.getLogger(UserDaoJdbcImpl.class);
 
