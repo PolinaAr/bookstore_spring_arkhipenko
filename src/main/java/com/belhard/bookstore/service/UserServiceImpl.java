@@ -18,12 +18,10 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     public UserServiceImpl() {
-        System.out.println("Create constructor UserService");
     }
 
     @Autowired
     public void setUserDao(UserDao userDao) {
-        System.out.println("Set userDao to UserService");
         this.userDao = userDao;
     }
 

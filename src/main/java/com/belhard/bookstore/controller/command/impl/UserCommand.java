@@ -7,18 +7,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-@Controller("userCommand")
+@Controller("user")
 public class UserCommand implements Command {
 
     private UserService userService;
 
     public UserCommand() {
-        System.out.println("Create constructor userCommand");
     }
 
     @Autowired
     public void setUserService(UserService userService) {
-        System.out.println("SET userService to userController");
         this.userService = userService;
     }
 

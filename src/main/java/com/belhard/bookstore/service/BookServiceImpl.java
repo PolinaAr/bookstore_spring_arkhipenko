@@ -2,7 +2,6 @@ package com.belhard.bookstore.service;
 
 import com.belhard.bookstore.dao.Book;
 import com.belhard.bookstore.dao.BookDao;
-import com.belhard.bookstore.dao.BookDaoJdbcImpl;
 import com.belhard.bookstore.exceptions.BookException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,12 +18,10 @@ public class BookServiceImpl implements BookService {
     private BookDao bookDao;
 
     public BookServiceImpl() {
-        System.out.println("Create constructor bookService");
     }
 
     @Autowired
     public void setBookDao(BookDao bookDao) {
-        System.out.println("SET bookDao to BookService");
         this.bookDao = bookDao;
     }
 
@@ -95,7 +92,7 @@ public class BookServiceImpl implements BookService {
             throw new BookException("This book is already exist.");
         }
         Book createdBook = bookDao.createBook(bookToCreate);
-        if (createdBook == null){
+        if (createdBook == null) {
             throw new BookException("The book is not created");
         }
         BookDto createdBookDto = toDto(createdBook);
@@ -123,7 +120,7 @@ public class BookServiceImpl implements BookService {
             throw new BookException("You can't update this book. Book with id " + bookDto.getId() + " already exist");
         }
         Book updatedBook = bookDao.updateBook(bookToUpdate);
-        if (updatedBook == null){
+        if (updatedBook == null) {
             throw new BookException("The book is not updated");
         }
         BookDto updatedBookDto = toDto(updatedBook);
