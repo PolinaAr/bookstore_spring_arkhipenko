@@ -2,24 +2,35 @@ package com.belhard.bookstore.service;
 
 import com.belhard.bookstore.dao.Book;
 import com.belhard.bookstore.dao.BookDao;
-import com.belhard.bookstore.dao.BookDaoJdbcImpl;
 import com.belhard.bookstore.exceptions.BookException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service("bookService")
 public class BookServiceImpl implements BookService {
 
-    private final BookDao BOOK_DAO = new BookDaoJdbcImpl();
+    private BookDao bookDao;
+
+    public BookServiceImpl() {
+    }
+
+    @Autowired
+    public void setBookDao(BookDao bookDao) {
+        this.bookDao = bookDao;
+    }
+
     private static final Logger logger = LogManager.getLogger(BookServiceImpl.class);
 
     @Override
     public List<BookDto> getAllBooks() {
         logger.debug("Call method getAllBook");
-        List<Book> books = BOOK_DAO.getAllBooks();
+        List<Book> books = bookDao.getAllBooks();
         List<BookDto> dtos = new ArrayList<>();
         for (Book book : books) {
             BookDto bookDto = toDto(book);
@@ -31,7 +42,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto getBookById(Long id) {
         logger.debug("Call method getBookById");
-        Book book = BOOK_DAO.getBookById(id);
+        Book book = bookDao.getBookById(id);
         if (book == null) {
             throw new BookException("There is no book with id = " + id);
         }
@@ -41,7 +52,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto getBookByIsbn(String isbn) {
         logger.debug("Call method getBookByIsbn");
-        Book book = BOOK_DAO.getBookByIsbn(isbn);
+        Book book = bookDao.getBookByIsbn(isbn);
         if (book == null) {
             throw new BookException("There is no book with isbn = " + isbn);
         }
@@ -51,7 +62,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDto> getBookByAuthor(String author) {
         logger.debug("Call method getBookByAuthor");
-        List<Book> books = BOOK_DAO.getBookByAuthor(author);
+        List<Book> books = bookDao.getBookByAuthor(author);
         List<BookDto> dtos = new ArrayList<>();
         for (Book book : books) {
             BookDto bookDto = toDto(book);
@@ -76,12 +87,12 @@ public class BookServiceImpl implements BookService {
     public BookDto createBook(BookDto bookDto) {
         logger.debug("Call method createBook");
         Book bookToCreate = toBook(bookDto);
-        Book existing = BOOK_DAO.getBookByIsbn(bookToCreate.getIsbn());
+        Book existing = bookDao.getBookByIsbn(bookToCreate.getIsbn());
         if (existing != null) {
             throw new BookException("This book is already exist.");
         }
-        Book createdBook = BOOK_DAO.createBook(bookToCreate);
-        if (createdBook == null){
+        Book createdBook = bookDao.createBook(bookToCreate);
+        if (createdBook == null) {
             throw new BookException("The book is not created");
         }
         BookDto createdBookDto = toDto(createdBook);
@@ -104,12 +115,12 @@ public class BookServiceImpl implements BookService {
     public BookDto updateBook(BookDto bookDto) {
         logger.debug("Call method updateBook");
         Book bookToUpdate = toBook(bookDto);
-        Book existing = BOOK_DAO.getBookByIsbn(bookToUpdate.getIsbn());
+        Book existing = bookDao.getBookByIsbn(bookToUpdate.getIsbn());
         if (existing != null && existing.getId() != bookDto.getId()) {
             throw new BookException("You can't update this book. Book with id " + bookDto.getId() + " already exist");
         }
-        Book updatedBook = BOOK_DAO.updateBook(bookToUpdate);
-        if (updatedBook == null){
+        Book updatedBook = bookDao.updateBook(bookToUpdate);
+        if (updatedBook == null) {
             throw new BookException("The book is not updated");
         }
         BookDto updatedBookDto = toDto(updatedBook);
@@ -119,7 +130,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteBook(Long id) {
         logger.debug("Call method deleteBook");
-        if (!BOOK_DAO.deleteBook(id)) {
+        if (!bookDao.deleteBook(id)) {
             throw new BookException("The book is not deleted");
         }
     }
@@ -127,7 +138,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public int countAllBooks() {
         logger.debug("Call method countAllBooks");
-        return BOOK_DAO.countAllBooks();
+        return bookDao.countAllBooks();
     }
 
     @Override

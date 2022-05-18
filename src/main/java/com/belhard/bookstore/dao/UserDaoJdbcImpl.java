@@ -1,20 +1,21 @@
 package com.belhard.bookstore.dao;
 
-import com.belhard.bookstore.util.DbConfigurator;
 import com.belhard.bookstore.exceptions.UserException;
+import com.belhard.bookstore.util.DbConfigurator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository("userDao")
 public class UserDaoJdbcImpl implements UserDao {
+
+    public UserDaoJdbcImpl() {
+    }
 
     private static final Logger logger = LogManager.getLogger(UserDaoJdbcImpl.class);
 
