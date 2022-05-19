@@ -1,7 +1,7 @@
 package com.belhard.bookstore.controller.command.impl;
 
 import com.belhard.bookstore.controller.command.Command;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 
 @Controller("error")

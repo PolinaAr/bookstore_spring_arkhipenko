@@ -3,20 +3,15 @@ package com.belhard.bookstore.controller.command.impl;
 import com.belhard.bookstore.controller.command.Command;
 import com.belhard.bookstore.service.BookDto;
 import com.belhard.bookstore.service.BookService;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 
 @Controller("book")
 public class BookCommand implements Command {
 
-    private BookService bookService;
+    private final BookService bookService;
 
-    public BookCommand() {
-    }
-
-    @Autowired
-    public void setBookService(BookService bookService) {
+    public BookCommand(BookService bookService) {
         this.bookService = bookService;
     }
 

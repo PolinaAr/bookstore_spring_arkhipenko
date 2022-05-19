@@ -4,16 +4,18 @@ import com.belhard.bookstore.ContextController;
 import com.belhard.bookstore.controller.command.Command;
 import com.belhard.bookstore.exceptions.BookException;
 import com.belhard.bookstore.exceptions.UserException;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet("/controller")
@@ -22,7 +24,7 @@ public class Controller extends HttpServlet {
     private AnnotationConfigApplicationContext context;
     private static final Logger logger = LogManager.getLogger(Controller.class);
 
-    @Override
+    @PostConstruct
     public void init() {
         context = new AnnotationConfigApplicationContext(ContextController.class);
     }
@@ -61,10 +63,15 @@ public class Controller extends HttpServlet {
         Command command;
         try {
             command = (Command) context.getBean(action);
-        } catch (NoSuchBeanDefinitionException e){
+        } catch (NoSuchBeanDefinitionException e) {
             command = (Command) context.getBean("error");
         }
         String page = command.execute(req);
         req.getRequestDispatcher(page).forward(req, resp);
+    }
+
+    @PreDestroy
+    public void destroy() {
+        context.close();
     }
 }

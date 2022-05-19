@@ -3,20 +3,15 @@ package com.belhard.bookstore.controller.command.impl;
 import com.belhard.bookstore.controller.command.Command;
 import com.belhard.bookstore.service.UserDto;
 import com.belhard.bookstore.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 
 @Controller("user")
 public class UserCommand implements Command {
 
-    private UserService userService;
+    private final UserService userService;
 
-    public UserCommand() {
-    }
-
-    @Autowired
-    public void setUserService(UserService userService) {
+    public UserCommand(UserService userService) {
         this.userService = userService;
     }
 
