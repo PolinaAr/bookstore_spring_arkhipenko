@@ -22,7 +22,7 @@
         <tr>
             <td> ${book.id} </td>
             <td> ${book.isbn} </td>
-            <td><a href="http://localhost:8090/bookstore-arkhipenko/controller?command=book&id=${book.id}"> ${book.title} </a></td>
+            <td><a href="http://localhost:8080/books/${book.id}"> ${book.title} </a></td>
             <td> ${book.author} </td>
         </tr>
         </c:forEach>

@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserService {
     private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
     private final UserDao userDao;
 
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl( UserDao userDao) {
         this.userDao = userDao;
     }
 

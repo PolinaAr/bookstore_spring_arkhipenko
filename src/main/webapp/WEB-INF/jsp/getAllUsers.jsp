@@ -1,4 +1,5 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -22,7 +23,7 @@
         <c:forEach items="${users}" var="user">
         <tr>
             <td>${user.id} </td>
-            <td><a href="http://localhost:8090/bookstore-arkhipenko/controller?command=user&id=${user.id}">${user.name}</a> </td>
+            <td><a href="http://localhost:8080/users/${user.id}">${user.name}</a> </td>
             <td>${user.lastName}</td>
             <td>${user.role.toString().toLowerCase()}</td>
             <td>${user.birthday}</td>

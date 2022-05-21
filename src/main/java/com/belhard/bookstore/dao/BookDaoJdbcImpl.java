@@ -1,186 +1,152 @@
 package com.belhard.bookstore.dao;
 
+import com.belhard.bookstore.dao.RowMappers.BookRowMapper;
 import com.belhard.bookstore.exceptions.BookException;
-import com.belhard.bookstore.util.DbConfigurator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository("bookDao")
 public class BookDaoJdbcImpl implements BookDao {
 
-    public BookDaoJdbcImpl() {
+    private final NamedParameterJdbcTemplate template;
+    private final BookRowMapper rowMapper;
+
+    @Autowired
+    public BookDaoJdbcImpl(NamedParameterJdbcTemplate template, BookRowMapper rowMapper) {
+        this.template = template;
+        this.rowMapper = rowMapper;
     }
 
     private static final Logger logger = LogManager.getLogger(BookDaoJdbcImpl.class);
     public static final String GET_ALL = "SELECT b.id, b.isbn, b.title, b.author, b.pages, c.name AS cover, b.price FROM books b " +
             "JOIN covers c ON b.cover_id = c.id WHERE deleted = false";
     public static final String GET_BOOK_BY_ID = "SELECT b.id, b.isbn, b.title, b.author, b.pages, c.name AS cover, b.price FROM books b " +
-            "JOIN covers c ON b.cover_id = c.id WHERE b.id = ? AND b.deleted = false";
+            "JOIN covers c ON b.cover_id = c.id WHERE b.id = :id AND b.deleted = false";
     public static final String GET_BOOK_BY_ISBN = "SELECT b.id, b.isbn, b.title, b.author, b.pages, c.name AS cover, b.price FROM books b " +
-            "JOIN covers c ON b.cover_id = c.id WHERE isbn = ? AND deleted = false";
+            "JOIN covers c ON b.cover_id = c.id WHERE isbn = :isbn AND deleted = false";
     public static final String GET_BOOK_BY_AUTHOR = "SELECT b.id, b.isbn, b.title, b.author, b.pages, c.name AS cover, b.price FROM books b " +
-            "JOIN covers c ON b.cover_id = c.id WHERE author = ? AND deleted = false";
-    public static final String DELETE = "UPDATE books SET deleted = true WHERE id = ?";
+            "JOIN covers c ON b.cover_id = c.id WHERE author = :author AND deleted = false";
+    public static final String DELETE = "UPDATE books SET deleted = true WHERE id = :id";
     public static final String INSERT = "INSERT INTO books (isbn, title, author, pages, cover_id , price) " +
-            "VALUES (?, ?, ?, ?, (SELECT id FROM covers WHERE name = ?), ?);";
-    public static final String UPDATE = "UPDATE books SET isbn= ?, title = ?, author = ?, " +
-            "pages = ?, cover_id = (SELECT id FROM covers WHERE name = ?), price = ? where id= ?";
+            "VALUES (:isbn, :title, :author, :pages, (SELECT id FROM covers WHERE name = :coverName), :price);";
+    public static final String UPDATE = "UPDATE books SET isbn= :isbn, title = :title, author = :author, " +
+            "pages = :pages, cover_id = (SELECT id FROM covers WHERE name = :coverName), price = :price where id= :id";
     public static final String COUNT_ALL_BOOKS = "SELECT COUNT(*) AS count FROM books WHERE deleted = false";
 
     @Override
     public List<Book> getAllBooks() {
-        ArrayList<Book> books = new ArrayList<>();
-        try {
-            Statement statement = DbConfigurator.getConnection().createStatement();
-            ResultSet resultSet = statement.executeQuery(GET_ALL);
-            while (resultSet.next()) {
-                books.add(processResultGet(resultSet));
-            }
-        } catch (SQLException e) {
-            logger.error("The list of books was not received.", e);
-        }
-        return books;
-    }
-
-    private Book processResultGet(ResultSet resultSet) throws SQLException {
-        Book book = new Book();
-        book.setId(resultSet.getLong("id"));
-        book.setIsbn(resultSet.getString("isbn"));
-        book.setTitle(resultSet.getString("title"));
-        book.setAuthor(resultSet.getString("author"));
-        book.setPages(resultSet.getInt("pages"));
-        book.setCover(Book.Cover.valueOf(resultSet.getString("cover")));
-        book.setPrice(resultSet.getBigDecimal("price"));
-        return book;
+        return template.query(GET_ALL, rowMapper);
     }
 
     @Override
     public Book getBookById(Long id) {
         try {
-            PreparedStatement statement = DbConfigurator.getConnection()
-                    .prepareStatement(GET_BOOK_BY_ID);
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return processResultGet(resultSet);
-            }
-        } catch (SQLException e) {
+            return template.queryForObject(GET_BOOK_BY_ID, Map.of("id", id), rowMapper);
+        } catch (EmptyResultDataAccessException e) {
             logger.error("The book was not received by id.", e);
+            return null;
         }
-        return null;
     }
 
     @Override
     public Book getBookByIsbn(String isbn) {
         try {
-            PreparedStatement statement = DbConfigurator.getConnection().prepareStatement(GET_BOOK_BY_ISBN);
-            statement.setString(1, isbn);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return processResultGet(resultSet);
-            }
-        } catch (SQLException e) {
+            return template.queryForObject(GET_BOOK_BY_ISBN, Map.of("isbn", isbn), rowMapper);
+        } catch (EmptyResultDataAccessException e) {
             logger.error("The book was not received by isbn.", e);
+            return null;
         }
-        return null;
     }
 
     @Override
     public List<Book> getBookByAuthor(String author) {
-        List<Book> books = new ArrayList<>();
-        try {
-            PreparedStatement statement = DbConfigurator.getConnection().prepareStatement(GET_BOOK_BY_AUTHOR);
-            statement.setString(1, author);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                books.add(processResultGet(resultSet));
-            }
-        } catch (SQLException e) {
-            logger.error("The book was not received by author", e);
-        }
-        return books;
+        return template.query(GET_BOOK_BY_AUTHOR, Map.of("author", author), rowMapper);
     }
 
 
     @Override
     public Book createBook(Book book) {
         try {
-            PreparedStatement statement =
-                    DbConfigurator.getConnection().prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-            prepareStatement(book, statement);
-            int result = statement.executeUpdate();
+            SqlParameterSource source = new MapSqlParameterSource(getMap(book));
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            int result = template.update(INSERT, source, keyHolder, new String[]{"id"});
             if (result != 1) {
-                throw new BookException("Error of execute update when creating a book");
+                logger.error("Error of execute update when creating a book");
+                return null;
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                return getBookById(generatedKeys.getLong("id"));
+            Long id = Optional.ofNullable(keyHolder.getKey()).map(Number::longValue).get();
+            if (id != 0) {
+                return getBookById(id);
+            } else {
+                logger.error("The book didn't created");
+                return null;
             }
-        } catch (SQLException e) {
+        } catch (EmptyResultDataAccessException e) {
             logger.error("The book has not been created", e);
+            return null;
         }
-        return null;
     }
 
-    private void prepareStatement(Book book, PreparedStatement statement) throws SQLException {
-        statement.setString(1, book.getIsbn());
-        statement.setString(2, book.getTitle());
-        statement.setString(3, book.getAuthor());
-        statement.setInt(4, book.getPages());
-        statement.setString(5, book.getCover().toString());
-        statement.setBigDecimal(6, book.getPrice());
+    private Map<String, Object> getMap(Book book) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("isbn", book.getIsbn());
+        params.put("title", book.getTitle());
+        params.put("author", book.getAuthor());
+        params.put("pages", book.getPages());
+        params.put("coverName", book.getCover().toString().toUpperCase());
+        params.put("price", book.getPrice());
+        return params;
     }
 
     @Override
     public Book updateBook(Book book) {
         try {
-            PreparedStatement statement = DbConfigurator.getConnection().prepareStatement(UPDATE);
-            prepareStatement(book, statement);
-            statement.setLong(7, book.getId());
-            int result = statement.executeUpdate();
+            Map<String, Object> params = getMap(book);
+            params.put("id", book.getId());
+            int result = template.update(UPDATE, params);
             if (result != 1) {
-                throw new BookException("Error of execute update when updating a book");
+                logger.error("Error of execute update when updating a book");
+                return null;
             }
             return getBookById(book.getId());
-        } catch (SQLException e) {
+        } catch (EmptyResultDataAccessException e) {
             logger.error("The book has not been updated", e);
+            return null;
         }
-        return null;
     }
 
     @Override
     public boolean deleteBook(Long id) {
         try {
-            PreparedStatement statement = DbConfigurator.getConnection().prepareStatement(DELETE);
-            statement.setLong(1, id);
-            int result = statement.executeUpdate();
+            int result = template.update(DELETE, Map.of("id", id));
             return result == 1;
-        } catch (SQLException e) {
+        } catch (EmptyResultDataAccessException e) {
             logger.error("The book is not deleted.", e);
+            throw new BookException("The book is not deleted");
         }
-        throw new BookException("The book is not deleted");
     }
 
     @Override
     public int countAllBooks() {
         try {
-            Statement statement = DbConfigurator.getConnection().createStatement();
-            ResultSet resultSet = statement.executeQuery(COUNT_ALL_BOOKS);
-            if (resultSet.next()) {
-                return resultSet.getInt("count");
-            }
-        } catch (SQLException e) {
+            return template.query(DELETE, (rs, rowNum) -> rs.getInt("count")).get(0);
+        } catch (EmptyResultDataAccessException e) {
             logger.error("The books are not counted", e);
+            throw new BookException("The books are not counted");
         }
-        throw new BookException("The books are not counted");
     }
 
 }

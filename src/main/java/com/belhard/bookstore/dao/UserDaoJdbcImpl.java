@@ -1,20 +1,36 @@
 package com.belhard.bookstore.dao;
 
+import com.belhard.bookstore.dao.RowMappers.UserRowMapper;
 import com.belhard.bookstore.exceptions.UserException;
-import com.belhard.bookstore.util.DbConfigurator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
+import java.sql.Date;
+import java.sql.ResultSet;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository("userDao")
 public class UserDaoJdbcImpl implements UserDao {
 
-    public UserDaoJdbcImpl() {
+    private final NamedParameterJdbcTemplate template;
+    private final UserRowMapper rowMapper;
+
+    @Autowired
+    public UserDaoJdbcImpl(NamedParameterJdbcTemplate template, UserRowMapper rowMapper) {
+        this.template = template;
+        this.rowMapper = rowMapper;
     }
 
     private static final Logger logger = LogManager.getLogger(UserDaoJdbcImpl.class);
@@ -22,145 +38,107 @@ public class UserDaoJdbcImpl implements UserDao {
     public static final String GET_ALL = "SELECT u.id, u.name, u.lastname, r.name AS role, u.email, u.password, u.birthday FROM users u " +
             "JOIN roles r ON u.role_id = r.id WHERE u.deleted = false";
     public static final String GET_BY_ID = "SELECT u.id, u.name, u.lastname, r.name AS role, u.email, u.password, u.birthday FROM users u " +
-            "JOIN roles r ON u.role_id = r.id WHERE u.id = ? AND u.deleted = false";
+            "JOIN roles r ON u.role_id = r.id WHERE u.id = :id AND u.deleted = false";
     public static final String GET_BY_LAST_NAME = "SELECT u.id, u.name, u.lastname, r.name AS role, u.email, u.password, u.birthday FROM users u " +
-            "JOIN roles r ON u.role_id = r.id WHERE u.lastname = ? AND u.deleted = false";
+            "JOIN roles r ON u.role_id = r.id WHERE u.lastname = :lastname AND u.deleted = false";
     public static final String GET_BY_EMAIL = "SELECT u.id, u.name, u.lastname, r.name AS role, u.email, u.password, u.birthday FROM users u " +
-            "JOIN roles r ON u.role_id = r.id WHERE u.email = ? AND u.deleted = false";
+            "JOIN roles r ON u.role_id = r.id WHERE u.email = :email AND u.deleted = false";
     public static final String INSERT = "INSERT INTO users (name, lastname, role_id, email, password, birthday) " +
-            "VALUES (?, ?, (SELECT id FROM roles WHERE name = ?), ?, ?, ?)";
-    public static final String UPDATE = "UPDATE users SET name = ?, lastname = ?, role_id = (SELECT id FROM roles WHERE name = ?), " +
-            "email = ?, password = ?, birthday = ? WHERE id= ?";
-    public static final String DELETE = "UPDATE users SET deleted = true WHERE id= ?";
+            "VALUES (:name, :lastname, (SELECT id FROM roles WHERE name = :roleName), :email, :password, :birthday)";
+    public static final String UPDATE = "UPDATE users SET name = :name, lastname = :lastname, role_id = (SELECT id FROM roles WHERE name = :roleName), " +
+            "email = :email, password = :password, birthday = :birthday WHERE id = :id";
+    public static final String DELETE = "UPDATE users SET deleted = true WHERE id= :id";
     public static final String COUNT_ALL_USERS = "SELECT COUNT(*) AS count FROM users WHERE deleted = false";
 
     @Override
     public List<User> getAllUsers() {
-        ArrayList<User> users = new ArrayList<>();
-        try {
-            Statement statement = DbConfigurator.getConnection().createStatement();
-            ResultSet resultSet = statement.executeQuery(GET_ALL);
-            while (resultSet.next()) {
-                users.add(processResultGet(resultSet));
-            }
-        } catch (SQLException e) {
-            logger.error("The list of users was not received.", e);
-        }
-        return users;
-    }
-
-    private User processResultGet(ResultSet resultSet) throws SQLException {
-        User user = new User();
-        user.setId(resultSet.getLong("id"));
-        user.setName(resultSet.getString("name"));
-        user.setLastName(resultSet.getString("lastname"));
-        user.setRole(User.Role.valueOf(resultSet.getString("role")));
-        user.setEmail(resultSet.getString("email"));
-        user.setPassword(resultSet.getString("password"));
-        user.setBirthday(resultSet.getDate("birthday").toLocalDate());
-        return user;
+        return template.query(GET_ALL, rowMapper);
     }
 
     @Override
     public User getUserById(Long id) {
         try {
-            PreparedStatement statement = DbConfigurator.getConnection().prepareStatement(GET_BY_ID);
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return processResultGet(resultSet);
-            }
-        } catch (SQLException e) {
+            return template.queryForObject(GET_BY_ID, Map.of("id", id), rowMapper);
+        } catch (EmptyResultDataAccessException e) {
             logger.error("The user was not received by id.", e);
+            return null;
         }
-        return null;
     }
 
     @Override
     public User getUserByEmail(String email) {
         try {
-            PreparedStatement statement = DbConfigurator.getConnection().prepareStatement(GET_BY_EMAIL);
-            statement.setString(1, email);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return processResultGet(resultSet);
-            }
-        } catch (SQLException e) {
-            logger.error("The user was not received by email.", e);
+            return template.queryForObject(GET_BY_EMAIL, Map.of("email", email), rowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            logger.error("The user was nat received by email", e);
+            return null;
         }
-        return null;
     }
 
     @Override
     public List<User> getUserByLastName(String lastName) {
-        List<User> users = new ArrayList<>();
-        try {
-            PreparedStatement statement = DbConfigurator.getConnection().prepareStatement(GET_BY_LAST_NAME);
-            statement.setString(1, lastName);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                users.add(processResultGet(resultSet));
-            }
-        } catch (SQLException e) {
-            logger.error("The list of users was not received by last name.", e);
-        }
-        return users;
+        return template.query(GET_BY_LAST_NAME, Map.of("lastname", lastName), rowMapper);
     }
 
     @Override
     public User createUser(User user) {
         try {
-            PreparedStatement statement = DbConfigurator.getConnection().prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-            prepareStatementUser(user, statement);
-            int result = statement.executeUpdate();
-            if (result != 1) {
-                throw new UserException("User didn't create.");
+            Map<String, Object> params = getMap(user);
+            SqlParameterSource source = new MapSqlParameterSource(params);
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            int rowsUpdated = template.update(INSERT, source, keyHolder, new String[]{"id"});
+            if (rowsUpdated != 1) {
+                logger.error("The user didn't created");
+                return null;
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                return getUserById(generatedKeys.getLong("id"));
+            Long id = Optional.ofNullable(keyHolder.getKey()).map(Number::longValue).get();
+            if (id != 0) {
+                return getUserById(id);
+            } else {
+                logger.error("The user didn't created");
+                return null;
             }
-        } catch (SQLException e) {
-            logger.error("The user was not created.", e);
+        } catch (EmptyResultDataAccessException e) {
+            logger.error("The user didn't created");
+            return null;
         }
-        return null;
+    }
+
+    private Map<String, Object> getMap(User user) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", user.getName());
+        params.put("lastname", user.getLastName());
+        params.put("roleName", user.getRole().toString());
+        params.put("email", user.getEmail());
+        params.put("password", user.getPassword());
+        params.put("birthday", Date.valueOf(LocalDate.of(user.getBirthday().getYear(), user.getBirthday().getMonth(),
+                user.getBirthday().getDayOfMonth())));
+        return params;
     }
 
     @Override
     public User updateUser(User user) {
         try {
-            PreparedStatement statement = DbConfigurator.getConnection().prepareStatement(UPDATE);
-            prepareStatementUser(user, statement);
-            statement.setLong(7, user.getId());
-            int result = statement.executeUpdate();
-            if (result != 1) {
-                throw new UserException("The User didn't update.");
+            Map<String, Object> params = getMap(user);
+            params.put("id", user.getId());
+            int rowsUpdated = template.update(UPDATE, params);
+            if (rowsUpdated != 1) {
+                logger.error("The user didn't updated");
+                return null;
             }
             return getUserById(user.getId());
-        } catch (SQLException e) {
+        } catch (EmptyResultDataAccessException e) {
             logger.error("The user is not updated.");
+            return null;
         }
-        return null;
-    }
-
-    private void prepareStatementUser(User user, PreparedStatement statement) throws SQLException {
-        statement.setString(1, user.getName());
-        statement.setString(2, user.getLastName());
-        statement.setString(3, user.getRole().toString());
-        statement.setString(4, user.getEmail());
-        statement.setString(5, user.getPassword());
-        statement.setDate(6, Date.valueOf(LocalDate.of(user.getBirthday().getYear(),
-                user.getBirthday().getMonth(), user.getBirthday().getDayOfMonth())));
     }
 
     @Override
     public boolean deleteUser(Long id) {
         try {
-            PreparedStatement statement = DbConfigurator.getConnection().prepareStatement(DELETE);
-            statement.setLong(1, id);
-            int result = statement.executeUpdate();
+            int result = template.update(DELETE, Map.of("id", id));
             return result == 1;
-        } catch (SQLException e) {
+        } catch (EmptyResultDataAccessException e) {
             logger.error("The user is not deleted.");
         }
         throw new UserException("The user is not deleted.");
@@ -169,14 +147,11 @@ public class UserDaoJdbcImpl implements UserDao {
     @Override
     public int countAllUsers() {
         try {
-            Statement statement = DbConfigurator.getConnection().createStatement();
-            ResultSet resultSet = statement.executeQuery(COUNT_ALL_USERS);
-            if (resultSet.next()) {
-                return resultSet.getInt("count");
-            }
-        } catch (SQLException e) {
+            List<Integer> result = template.query(COUNT_ALL_USERS, (rs, rowNum) -> rs.getInt("count"));
+            return result.get(0);
+        } catch (EmptyResultDataAccessException e) {
             logger.error("The users are not counted.", e);
+            throw new UserException("The users are not counted");
         }
-        throw new UserException("The users are not counted");
     }
 }
