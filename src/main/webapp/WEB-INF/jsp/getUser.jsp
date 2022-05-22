@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="/WEB-INF/style/general.css" rel="stylesheet">
-    <link href="/WEB-INF/style/mainPartOfPage.css" rel="stylesheet">
+    <link href="resources/static/css/general.css" rel="stylesheet">
+    <link href="resources/static/css/mainPartOfPage.css" rel="stylesheet">
     <title>User</title>
 </head>
 <body>

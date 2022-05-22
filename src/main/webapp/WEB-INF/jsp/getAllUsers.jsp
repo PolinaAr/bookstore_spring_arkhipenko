@@ -3,8 +3,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="style/general.css" rel="stylesheet">
-    <link href="style/tables.css" rel="stylesheet">
+    <link href="resources/static/css/general.css" rel="stylesheet">
+    <link href="resources/static/css/tables.css" rel="stylesheet">
     <title>Users</title>
 </head>
 <body>
