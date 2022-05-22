@@ -1,14 +1,15 @@
+<%@page contentType="text/html;charset=UTF-8" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="style/general.css" rel="stylesheet">
-    <link href="style/mainPartOfPage.css" rel="stylesheet">
+    <link href="resources/static/css/general.css" rel="stylesheet">
+    <link href="resources/static/css/mainPartOfPage.css" rel="stylesheet">
     <title>User</title>
 </head>
 <body>
     <div class="topPanel">
         <img src="pictures/logo.png" alt="Polina bookstore"/>
-        <h1><a href="http://localhost:8090/bookstore-arkhipenko/controller?command=users">User</a></h1>
+        <h1><a href="http://localhost:8080/users">User</a></h1>
     </div>
     <div class="mainPart">
         <h2>with id = ${user.id}</h2>

@@ -19,5 +19,5 @@ h1 {
 }
 
 body {
-    background-image: url(pictures/back.jpg);
+    background-image: url(../../../webapp/WEB-INF/jsp/style/pictures/back.jpg);
 }

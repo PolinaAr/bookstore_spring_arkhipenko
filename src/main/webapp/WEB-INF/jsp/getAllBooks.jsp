@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="style/general.css" rel="stylesheet">
-    <link href="style/tables.css" rel="stylesheet">
+    <link href="resources/static/css/general.css" rel="stylesheet">
+    <link href="resources/static/css/tables.css" rel="stylesheet">
     <title>Books</title>
 </head>
 <body>
@@ -22,7 +22,7 @@
         <tr>
             <td> ${book.id} </td>
             <td> ${book.isbn} </td>
-            <td><a href="http://localhost:8090/bookstore-arkhipenko/controller?command=book&id=${book.id}"> ${book.title} </a></td>
+            <td><a href="http://localhost:8080/books/${book.id}"> ${book.title} </a></td>
             <td> ${book.author} </td>
         </tr>
         </c:forEach>
