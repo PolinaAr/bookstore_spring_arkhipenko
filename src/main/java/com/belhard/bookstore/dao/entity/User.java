@@ -1,4 +1,4 @@
-package com.belhard.bookstore.dao;
+package com.belhard.bookstore.dao.entity;
 
 import java.time.LocalDate;
 import java.util.Objects;

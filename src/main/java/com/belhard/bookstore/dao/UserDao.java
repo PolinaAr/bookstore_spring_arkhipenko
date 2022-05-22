@@ -1,5 +1,7 @@
 package com.belhard.bookstore.dao;
 
+import com.belhard.bookstore.dao.entity.User;
+
 import java.util.List;
 
 public interface UserDao {

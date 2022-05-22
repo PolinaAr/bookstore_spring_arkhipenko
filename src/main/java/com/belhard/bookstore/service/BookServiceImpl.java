@@ -1,6 +1,6 @@
 package com.belhard.bookstore.service;
 
-import com.belhard.bookstore.dao.Book;
+import com.belhard.bookstore.dao.entity.Book;
 import com.belhard.bookstore.dao.BookDao;
 import com.belhard.bookstore.exceptions.BookException;
 import org.apache.logging.log4j.LogManager;

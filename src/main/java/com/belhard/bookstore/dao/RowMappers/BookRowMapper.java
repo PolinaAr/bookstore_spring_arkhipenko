@@ -1,6 +1,6 @@
 package com.belhard.bookstore.dao.RowMappers;
 
-import com.belhard.bookstore.dao.Book;
+import com.belhard.bookstore.dao.entity.Book;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
