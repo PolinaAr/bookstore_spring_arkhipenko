@@ -1,19 +1,20 @@
-package com.belhard.bookstore.dao.entity;
+package com.belhard.bookstore.service.dto;
+
+import com.belhard.bookstore.dao.entity.Order;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
-public class Order {
+public class OrderDto {
+
     private Long id;
-    private Long userId;
+    private UserDto userDto;
     private BigDecimal totalCost;
     private LocalDateTime timestamp;
-    private Status status;
-
-    public enum Status {
-        CANCELED, COMPLETED, AWAITING_PAYMENT, IN_WAY, PROCESSING
-    }
+    private Order.Status status;
+    private List<OrderItemDto> items;
 
     public Long getId() {
         return id;
@@ -23,12 +24,12 @@ public class Order {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public UserDto getUserDto() {
+        return userDto;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserDto(UserDto userDto) {
+        this.userDto = userDto;
     }
 
     public BigDecimal getTotalCost() {
@@ -47,38 +48,44 @@ public class Order {
         this.timestamp = timestamp;
     }
 
-    public Status getStatus() {
+    public Order.Status getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(Order.Status status) {
         this.status = status;
+    }
+
+    public List<OrderItemDto> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItemDto> items) {
+        this.items = items;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
-        return Objects.equals(userId, order.userId)
-                && Objects.equals(totalCost, order.totalCost)
-                && Objects.equals(timestamp, order.timestamp)
-                && status == order.status;
+        OrderDto orderDto = (OrderDto) o;
+        return Objects.equals(userDto, orderDto.userDto) && Objects.equals(totalCost, orderDto.totalCost) && Objects.equals(timestamp, orderDto.timestamp) && status == orderDto.status && Objects.equals(items, orderDto.items);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, totalCost, timestamp, status);
+        return Objects.hash(totalCost, timestamp, status, items);
     }
 
     @Override
     public String toString() {
-        return "\nOrder{" +
+        return "\nOrderDto{" +
                 "id=" + id +
-                ", userId=" + userId +
+                ", userDto=" + userDto +
                 ", totalCost=" + totalCost +
                 ", timestamp=" + timestamp +
                 ", status=" + status +
+                ", items=" + items +
                 '}';
     }
 }

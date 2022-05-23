@@ -85,7 +85,7 @@ public class OrderDaoImpl implements OrderDao {
     private Map<String, Object> getMap(Order order) {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", order.getUserId());
-        params.put("total_cost", order.getTotalPrice());
+        params.put("total_cost", order.getTotalCost());
         params.put("status", order.getStatus().toString().toLowerCase());
         return params;
     }
