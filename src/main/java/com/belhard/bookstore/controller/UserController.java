@@ -1,7 +1,7 @@
 package com.belhard.bookstore.controller;
 
 import com.belhard.bookstore.exceptions.UserException;
-import com.belhard.bookstore.service.UserDto;
+import com.belhard.bookstore.service.dto.UserDto;
 import com.belhard.bookstore.service.UserService;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -25,7 +25,6 @@ public class UserController {
     public String getAllUsers(Model model) {
         List<UserDto> userDtos = userService.getAllUsers();
         model.addAttribute("users", userDtos);
-        System.out.println(userDtos);
         return "getAllUsers";
     }
 

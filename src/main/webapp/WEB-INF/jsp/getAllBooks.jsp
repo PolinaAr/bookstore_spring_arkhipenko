@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="resources/static/css/general.css" rel="stylesheet">
-    <link href="resources/static/css/tables.css" rel="stylesheet">
+    <link href=".../css/general.css" rel="stylesheet">
+    <link href=".../css/tables.css" rel="stylesheet">
     <title>Books</title>
 </head>
 <body>

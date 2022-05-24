@@ -1,7 +1,7 @@
 package com.belhard.bookstore.controller;
 
 import com.belhard.bookstore.exceptions.BookException;
-import com.belhard.bookstore.service.BookDto;
+import com.belhard.bookstore.service.dto.BookDto;
 import com.belhard.bookstore.service.BookService;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;

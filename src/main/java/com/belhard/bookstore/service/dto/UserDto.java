@@ -1,4 +1,4 @@
-package com.belhard.bookstore.service;
+package com.belhard.bookstore.service.dto;
 
 import java.time.LocalDate;
 import java.util.Objects;
