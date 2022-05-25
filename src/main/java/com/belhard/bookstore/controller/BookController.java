@@ -3,6 +3,7 @@ package com.belhard.bookstore.controller;
 import com.belhard.bookstore.exceptions.BookException;
 import com.belhard.bookstore.service.dto.BookDto;
 import com.belhard.bookstore.service.BookService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ public class BookController {
 
     private final BookService bookService;
 
+    @Autowired
     public BookController(BookService bookService) {
         this.bookService = bookService;
     }

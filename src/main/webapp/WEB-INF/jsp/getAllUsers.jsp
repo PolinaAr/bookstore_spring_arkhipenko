@@ -3,13 +3,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href=".../css/general.css" rel="stylesheet">
-    <link href=".../css/tables.css" rel="stylesheet">
+    <link href="../css/general.css" rel="stylesheet">
+    <link href="../css/tables.css" rel="stylesheet">
     <title>Users</title>
 </head>
 <body>
     <div class="topPanel">
-        <img src="pictures/logo.png" alt="Polina bookstore"/>
+        <img src="../pictures/logo.png" alt="Polina bookstore"/>
         <h1>Users</h1>
     </div>
     <table>

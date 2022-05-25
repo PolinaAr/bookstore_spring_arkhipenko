@@ -1,14 +1,15 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href=".../css/general.css" rel="stylesheet">
-    <link href=".../css/tables.css" rel="stylesheet">
+    <link href="../css/general.css" rel="stylesheet">
+    <link href="../css/tables.css" rel="stylesheet">
     <title>Books</title>
 </head>
 <body>
     <div class="topPanel">
-        <img src="pictures/logo.png" alt="Polina bookstore"/>
+        <img src="../pictures/logo.png" alt="Polina bookstore"/>
         <h1>Books</h1>
     </div>
     <table>

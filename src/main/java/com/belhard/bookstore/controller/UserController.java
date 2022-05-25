@@ -3,6 +3,7 @@ package com.belhard.bookstore.controller;
 import com.belhard.bookstore.exceptions.UserException;
 import com.belhard.bookstore.service.dto.UserDto;
 import com.belhard.bookstore.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
+    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
