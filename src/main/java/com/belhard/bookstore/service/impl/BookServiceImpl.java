@@ -7,6 +7,7 @@ import com.belhard.bookstore.service.BookService;
 import com.belhard.bookstore.service.dto.BookDto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ public class BookServiceImpl implements BookService {
 
     private static final Logger logger = LogManager.getLogger(BookServiceImpl.class);
 
+    @Autowired
     public BookServiceImpl(BookDao bookDao) {
         this.bookDao = bookDao;
     }
