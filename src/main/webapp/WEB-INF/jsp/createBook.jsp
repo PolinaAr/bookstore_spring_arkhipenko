@@ -16,7 +16,13 @@
         <label for="title-input">Title: </label><input id="title-input" name="title" type="text"/><br/>
         <label for="author-input">Author: </label><input id="author-input" name="author" type="text"/><br/>
         <label for="pages-input">Pages: </label><input id="pages-input" name="pages" type="number"/><br/>
-        <label for="cover-input">Cover: </label><input id="cover-input" name="cover"/><br/>
+        <label for="cover-input">Role: </label>
+        <select id="cover-input" name="cover" required="required">
+            <option value="">Choose value</option>s
+            <option>Hard</option>
+            <option>Soft</option>
+            <option>Gift</option>
+        </select> <br/>
         <label for="price-input">Price: </label><input id="price-input" name="price" type=""/><br/>
         <input type="submit" value="Create"/>
     </form>

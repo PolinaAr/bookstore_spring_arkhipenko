@@ -14,7 +14,13 @@
     <form action="/users" method="post">
         <label for="name-input"> Name: </label><input id="name-input" name="name" type="text"/><br/>
         <label for="lastname-input">Lastname: </label><input id="lastname-input" name="lastname" type="text"/><br/>
-        <label for="role-input">Role: </label><input id="role-input" name="role" type="text"/><br/>
+        <label for="role-input">Role: </label>
+        <select id="role-input" name="role" required="required">
+            <option value="">Choose value</option>s
+            <option>Admin</option>
+            <option>Manager</option>
+            <option>Customer</option>
+        </select> <br/>
         <label for="email-input">Email: </label><input id="email-input" name="email" type="text"/><br/>
         <label for="password-input">Password: </label><input id="password-input" name="password" type="text"/><br/>
         <label for="birthday-input">Birthday: </label><input id="birthday-input" name="birthday" type="date"/><br/>

@@ -23,10 +23,10 @@ import java.util.Optional;
 @Repository
 public class OrderDaoImpl implements OrderDao {
 
-    public static final String GET_ALL = "SELECT o.id, o.user_id, o.total_cost, o.timestamp, s.name AS status FROM orders o" +
+    public static final String GET_ALL = "SELECT o.id, o.user_id, o.total_cost, o.timestamp, s.name AS status FROM orders o " +
             "JOIN status s ON o.status_id = s.id";
-    public static final String GET_BY_ID = "SELECT o.id, o.user_id, o.total_cost, o.timestamp, s.name AS status FROM orders o\n" +
-            "JOIN status s ON o.status_id = s.id WHERE id = :id";
+    public static final String GET_BY_ID = "SELECT o.id, o.user_id, o.total_cost, o.timestamp, s.name AS status FROM orders o " +
+            "JOIN status s ON o.status_id = s.id WHERE o.id = :id";
     public static final String INSERT = "INSERT INTO orders (user_id, total_cost, status_id) " +
             "VALUES (:userId, :total_cost, (SELECT id FROM status WHERE name = :status))";
     public static final String UPDATE = "UPDATE orders SET user_id= :userId, total_cost = :total_cost, " +

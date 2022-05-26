@@ -59,7 +59,7 @@ public class BookDaoJdbcImpl implements BookDao {
         try {
             return template.queryForObject(GET_BOOK_BY_ID, Map.of("id", id), rowMapper);
         } catch (EmptyResultDataAccessException e) {
-            logger.error("The book was not received by id.", e);
+            logger.info("The book was not received by id.", e);
             return null;
         }
     }
