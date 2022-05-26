@@ -30,7 +30,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
             "WHERE order_id = :order_id";
     public static final String INSERT = "INSERT INTO orderItem (order_id, book_id, quantity, price) " +
             "VALUES (:order_id, :book_id, :quantity, :price)";
-    public static final String UPDATE = "UPDATE orderItem SET order_id= :order_d, book_id = :book_id," +
+    public static final String UPDATE = "UPDATE orderItem SET order_id= :order_d, book_id = :book_id, " +
             "quantity = :quantity, price = :price WHERE id= :id";
     public static final String DELETE = "DELETE FROM orderItem WHERE id = :id";
 

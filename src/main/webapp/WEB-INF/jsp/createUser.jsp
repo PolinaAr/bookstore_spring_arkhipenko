@@ -2,12 +2,11 @@
 <head>
     <meta charset="UTF-8"/>
     <link href="../css/general.css" rel="stylesheet">
-    <link href="../css/mainPartOfPage.css" rel="stylesheet">
     <title>Create book</title>
 </head>
 <body>
     <div class="topPanel">
-        <img src="../pictures/logo.png" alt="Polina bookstore"/>
+        <a href="http://localhost:8080"><img src="../pictures/logo.png" alt="Polina bookstore"/></a>
         <h1>Create user</h1>
     </div>
     <p>Enter values</p>

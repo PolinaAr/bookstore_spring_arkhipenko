@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="topPanel">
-    <img src="../pictures/logo.png" alt="Polina bookstore"/>
+    <a href="http://localhost:8080"><img src="../pictures/logo.png" alt="Polina bookstore"/></a>
     <h1>Orders</h1>
 </div>
 <table>

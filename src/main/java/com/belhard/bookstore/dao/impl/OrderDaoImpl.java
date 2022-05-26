@@ -31,7 +31,7 @@ public class OrderDaoImpl implements OrderDao {
             "VALUES (:userId, :total_cost, (SELECT id FROM status WHERE name = :status))";
     public static final String UPDATE = "UPDATE orders SET user_id= :userId, total_cost = :total_cost, " +
             "timestamp = :timestamp, status_id = (SELECT id FROM status WHERE name = :status) WHERE id= :id";
-    public static final String DELETE = "UPDATE orders SET status_id = (SELECT id FROM status WHERE name = 'canceled' " +
+    public static final String DELETE = "UPDATE orders SET status_id = (SELECT id FROM status WHERE name = 'canceled') " +
             "WHERE id = :id";
 
     private static final Logger logger = LogManager.getLogger(OrderDaoImpl.class);

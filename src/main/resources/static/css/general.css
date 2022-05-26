@@ -21,3 +21,33 @@ h1 {
 body {
     background-image: url(../pictures/back.jpg);
 }
+
+.chapter {
+    border: 5px solid #f2c4ff;
+    background-color: #f8eafd;
+    border-radius: 10px;
+    text-align: center;
+    width: 360px;
+    height: 350px;
+    display: inline-block;
+}
+
+.name {
+    font-size: 60px;
+    color: #d562f6;
+}
+
+.mainPart {
+    background-color: rgb(248, 238, 249);
+    border-radius: 5px;
+    box-shadow: 3px 3px 7px rgb(230, 213, 232);
+    opacity: 0.9;
+    margin-right: 200px;
+    margin-left: 200px;
+    padding-left: 30px;
+    padding-bottom: 20px;
+}
+
+.blocks {
+    margin-left: 200px;
+}
