@@ -1,16 +1,16 @@
 package com.belhard.bookstore.controller;
 
 import com.belhard.bookstore.exceptions.UserException;
-import com.belhard.bookstore.service.UserService;
 import com.belhard.bookstore.service.dto.UserDto;
-import org.springframework.http.HttpStatus;
+import com.belhard.bookstore.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @RequestMapping("/users")
@@ -18,6 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
+    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -39,32 +40,6 @@ public class UserController {
             return "error";
         }
     }
-
-    @GetMapping("/create")
-    public String createForm() {
-        return "createUser";
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public String createUser(Model model, @RequestParam Map<String, Object> params) {
-        try {
-            UserDto userDto = new UserDto();
-            userDto.setName(params.get("name").toString());
-            userDto.setLastName(params.get("lastname").toString());
-            userDto.setRole(UserDto.Role.valueOf(params.get("role").toString().toUpperCase()));
-            userDto.setEmail(params.get("email").toString());
-            userDto.setPassword(params.get("password").toString());
-            userDto.setBirthday(LocalDate.parse(params.get("birthday").toString()));
-            UserDto created = userService.createUser(userDto);
-            model.addAttribute("user", created);
-            return "getUser";
-        } catch (UserException e) {
-            return "error";
-        }
-
-    }
-
 }
 
 
