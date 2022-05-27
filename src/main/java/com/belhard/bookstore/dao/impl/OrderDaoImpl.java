@@ -55,7 +55,7 @@ public class OrderDaoImpl implements OrderDao {
         try {
             return template.queryForObject(GET_BY_ID, Map.of("id", id), rowMapper);
         } catch (EmptyResultDataAccessException e) {
-            logger.error("The order was not received by id", e);
+            logger.info("The order was not received by id", e);
             return null;
         }
     }
