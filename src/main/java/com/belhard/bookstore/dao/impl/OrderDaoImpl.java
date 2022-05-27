@@ -23,15 +23,15 @@ import java.util.Optional;
 @Repository
 public class OrderDaoImpl implements OrderDao {
 
-    public static final String GET_ALL = "SELECT o.id, o.user_id, o.total_cost, o.timestamp, s.name AS status FROM orders o" +
+    public static final String GET_ALL = "SELECT o.id, o.user_id, o.total_cost, o.timestamp, s.name AS status FROM orders o " +
             "JOIN status s ON o.status_id = s.id";
-    public static final String GET_BY_ID = "SELECT o.id, o.user_id, o.total_cost, o.timestamp, s.name AS status FROM orders o\n" +
-            "JOIN status s ON o.status_id = s.id WHERE id = :id";
+    public static final String GET_BY_ID = "SELECT o.id, o.user_id, o.total_cost, o.timestamp, s.name AS status FROM orders o " +
+            "JOIN status s ON o.status_id = s.id WHERE o.id = :id";
     public static final String INSERT = "INSERT INTO orders (user_id, total_cost, status_id) " +
             "VALUES (:userId, :total_cost, (SELECT id FROM status WHERE name = :status))";
     public static final String UPDATE = "UPDATE orders SET user_id= :userId, total_cost = :total_cost, " +
             "timestamp = :timestamp, status_id = (SELECT id FROM status WHERE name = :status) WHERE id= :id";
-    public static final String DELETE = "UPDATE orders SET status_id = (SELECT id FROM status WHERE name = 'canceled' " +
+    public static final String DELETE = "UPDATE orders SET status_id = (SELECT id FROM status WHERE name = 'canceled') " +
             "WHERE id = :id";
 
     private static final Logger logger = LogManager.getLogger(OrderDaoImpl.class);
@@ -55,7 +55,7 @@ public class OrderDaoImpl implements OrderDao {
         try {
             return template.queryForObject(GET_BY_ID, Map.of("id", id), rowMapper);
         } catch (EmptyResultDataAccessException e) {
-            logger.error("The order was not received by id", e);
+            logger.info("The order was not received by id", e);
             return null;
         }
     }

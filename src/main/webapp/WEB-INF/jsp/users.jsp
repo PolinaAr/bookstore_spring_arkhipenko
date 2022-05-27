@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="topPanel">
-        <img src="../pictures/logo.png" alt="Polina bookstore"/>
+        <a href="http://localhost:8080"><img src="../pictures/logo.png" alt="Polina bookstore"/></a>
         <h1>Users</h1>
     </div>
     <table>

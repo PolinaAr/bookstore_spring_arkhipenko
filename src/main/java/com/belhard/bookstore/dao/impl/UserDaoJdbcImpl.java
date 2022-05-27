@@ -61,7 +61,7 @@ public class UserDaoJdbcImpl implements UserDao {
         try {
             return template.queryForObject(GET_BY_ID, Map.of("id", id), rowMapper);
         } catch (EmptyResultDataAccessException e) {
-            logger.error("The user was not received by id.", e);
+            logger.info("The user was not received by id.", e);
             return null;
         }
     }
@@ -71,7 +71,7 @@ public class UserDaoJdbcImpl implements UserDao {
         try {
             return template.queryForObject(GET_BY_EMAIL, Map.of("email", email), rowMapper);
         } catch (EmptyResultDataAccessException e) {
-            logger.error("The user was nat received by email", e);
+            logger.info("The user was not received by email", e);
             return null;
         }
     }

@@ -7,6 +7,7 @@ import com.belhard.bookstore.exceptions.BookException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -58,7 +59,7 @@ public class BookDaoJdbcImpl implements BookDao {
         try {
             return template.queryForObject(GET_BOOK_BY_ID, Map.of("id", id), rowMapper);
         } catch (EmptyResultDataAccessException e) {
-            logger.error("The book was not received by id.", e);
+            logger.info("The book was not received by id.", e);
             return null;
         }
     }
@@ -66,9 +67,10 @@ public class BookDaoJdbcImpl implements BookDao {
     @Override
     public Book getBookByIsbn(String isbn) {
         try {
-            return template.queryForObject(GET_BOOK_BY_ISBN, Map.of("isbn", isbn), rowMapper);
+            Book book = template.queryForObject(GET_BOOK_BY_ISBN, Map.of("isbn", isbn), rowMapper);
+            return book;
         } catch (EmptyResultDataAccessException e) {
-            logger.error("The book was not received by isbn.", e);
+            logger.info("The book was not received by isbn.", e);
             return null;
         }
     }

@@ -74,7 +74,7 @@ public class OrderDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(totalCost, timestamp, status, items);
+        return Objects.hash(userDto, totalCost, timestamp, status, items);
     }
 
     @Override

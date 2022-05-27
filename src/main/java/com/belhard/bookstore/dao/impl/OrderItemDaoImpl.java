@@ -30,7 +30,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
             "WHERE order_id = :order_id";
     public static final String INSERT = "INSERT INTO orderItem (order_id, book_id, quantity, price) " +
             "VALUES (:order_id, :book_id, :quantity, :price)";
-    public static final String UPDATE = "UPDATE orderItem SET order_id= :order_d, book_id = :book_id," +
+    public static final String UPDATE = "UPDATE orderItem SET order_id= :order_d, book_id = :book_id, " +
             "quantity = :quantity, price = :price WHERE id= :id";
     public static final String DELETE = "DELETE FROM orderItem WHERE id = :id";
 
@@ -54,7 +54,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
         try {
             return template.queryForObject(GET_BY_ID, Map.of("id", id), rowMapper);
         } catch (EmptyResultDataAccessException e) {
-            logger.error("The orderItem was not received by orderItem id", e);
+            logger.info("The orderItem was not received by orderItem id", e);
             return null;
         }
     }
