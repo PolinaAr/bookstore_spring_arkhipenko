@@ -9,6 +9,7 @@ import java.util.Objects;
 public class OrderItemDto {
 
     private Long id;
+    private Long orderId;
     private BookDto bookDto;
     private int quantity;
     private BigDecimal price;
@@ -19,6 +20,14 @@ public class OrderItemDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public BookDto getBookDto() {
@@ -50,18 +59,19 @@ public class OrderItemDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderItemDto that = (OrderItemDto) o;
-        return quantity == that.quantity && Objects.equals(bookDto, that.bookDto) && Objects.equals(price, that.price);
+        return quantity == that.quantity && Objects.equals(orderId, that.orderId) && Objects.equals(bookDto, that.bookDto) && Objects.equals(price, that.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bookDto, quantity, price);
+        return Objects.hash(orderId, bookDto, quantity, price);
     }
 
     @Override
     public String toString() {
         return "\nOrderItemDto{" +
                 "id=" + id +
+                ", orderId=" + orderId +
                 ", bookDto=" + bookDto +
                 ", quantity=" + quantity +
                 ", price=" + price +

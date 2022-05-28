@@ -87,8 +87,23 @@ public class OrderServiceImpl implements OrderService {
             logger.error("The order was not created");
             throw new OrderException("The order was not created");
         }
-        createOrderItem(orderDto);
+        List<OrderItemDto> items = orderDto.getItems();
+        for (OrderItemDto itemDto : items) {
+            itemDto.setOrderId(created.getId());
+        }
+        createOrderItem(items, toDto(created));/////
         return getById(created.getId());
+    }
+
+    private void createOrderItem(List<OrderItemDto> items, OrderDto orderDto) {
+        for (OrderItemDto itemDto : items) {
+            itemDto.setOrderId(orderDto.getId());
+            OrderItem createdOrderItem = orderItemDao.createOrderItem(itemToEntity(itemDto));
+            if (createdOrderItem == null) {
+                logger.error("The order item was not created");
+                throw new OrderException("The order item was not created");
+            }
+        }
     }
 
     @Override
@@ -102,24 +117,13 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItem> items = orderItemDao.getByOrderId(orderDto.getId());
         items.forEach(i -> orderItemDao.deleteOrderItem(i.getId()));
 
-        createOrderItem(orderDto);
+        createOrderItem(orderDto.getItems(), orderDto);
         return getById(orderDto.getId());
     }
 
-    private void createOrderItem(OrderDto orderDto) {
-        List<OrderItemDto> itemDtos = orderDto.getItems();
-        for (OrderItemDto itemDto : itemDtos) {
-            OrderItem createdOrderItem = orderItemDao.createOrderItem(itemToEntity(orderDto.getId(), itemDto));
-            if (createdOrderItem == null) {
-                logger.error("The order item was not created");
-                throw new OrderException("The order item was not created");
-            }
-        }
-    }
-
-    private OrderItem itemToEntity(Long orderId, OrderItemDto itemDto) {
+    private OrderItem itemToEntity(OrderItemDto itemDto) {
         OrderItem orderItem = new OrderItem();
-        orderItem.setOrderId(orderId);
+        orderItem.setOrderId(itemDto.getOrderId());
         orderItem.setPrice(itemDto.getPrice());
         orderItem.setQuantity(itemDto.getQuantity());
         orderItem.setBookId(itemDto.getBookDto().getId());
