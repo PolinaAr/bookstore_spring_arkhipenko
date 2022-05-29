@@ -86,10 +86,6 @@ public class BookServiceImpl implements BookService {
     public BookDto createBook(BookDto bookDto) {
         logger.debug("Call method createBook");
         Book bookToCreate = toBook(bookDto);
-        Book existing = bookDao.getBookByIsbn(bookToCreate.getIsbn());
-        if (existing != null) {
-            throw new BookException("This book is already exist.");
-        }
         Book createdBook = bookDao.createBook(bookToCreate);
         if (createdBook == null) {
             throw new BookException("The book is not created");
@@ -135,7 +131,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public int countAllBooks() {
+    public Long countAllBooks() {
         logger.debug("Call method countAllBooks");
         return bookDao.countAllBooks();
     }

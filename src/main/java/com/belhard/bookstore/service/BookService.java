@@ -21,7 +21,7 @@ public interface BookService {
 
     void deleteBook(Long id);
 
-    int countAllBooks();
+    Long countAllBooks();
 
     BigDecimal countPriceByAuthor(String author);
 }

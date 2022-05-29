@@ -1,20 +1,42 @@
 package com.belhard.bookstore.dao.entity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+@Entity
+@Table(name = "books")
 public class Book {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "isbn", length = 17, unique = true, nullable = false)
     private String isbn;
+
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
+
+    @Column(name = "author", length = 100, nullable = false)
     private String author;
+
+    @Column(name = "pages")
     private int pages;
-    private Cover cover;
+
+    @Column(name = "price", columnDefinition = "decimal default 0.0", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @Column(name = "deleted")
+    private boolean deleted = false;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "cover_id")
+    private Cover cover;
+
     public enum Cover {
-        SOFT, HARD, GIFT,
+        OTHER, SOFT, HARD, GIFT
     }
 
     public Book() {
@@ -27,37 +49,6 @@ public class Book {
         this.pages = pages;
         this.cover = cover;
         this.price = price;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Book book = (Book) o;
-        return pages == book.pages
-                && Objects.equals(isbn, book.isbn)
-                && Objects.equals(title, book.title)
-                && Objects.equals(author, book.author)
-                && cover == book.cover
-                && Objects.equals(price, book.price);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, isbn, title, author, pages, cover, price);
-    }
-
-    @Override
-    public String toString() {
-        return "\nBook{" +
-                "id=" + id +
-                ", isbn='" + isbn + '\'' +
-                ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", pages=" + pages +
-                ", cover=" + cover +
-                ", price=" + price +
-                '}';
     }
 
     public Long getId() {
@@ -100,6 +91,22 @@ public class Book {
         this.pages = pages;
     }
 
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public Cover getCover() {
         return cover;
     }
@@ -108,11 +115,30 @@ public class Book {
         this.cover = cover;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return pages == book.pages && deleted == book.deleted && Objects.equals(isbn, book.isbn) && Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.equals(price, book.price) && cover == book.cover;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    @Override
+    public int hashCode() {
+        return Objects.hash(isbn, title, author, pages, price, deleted, cover);
+    }
+
+    @Override
+    public String toString() {
+        return "\nBook{" +
+                "id=" + id +
+                ", isbn='" + isbn + '\'' +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", pages=" + pages +
+                ", price=" + price +
+                ", deleted=" + deleted +
+                ", cover=" + cover +
+                '}';
     }
 }
