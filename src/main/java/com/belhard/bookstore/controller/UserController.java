@@ -28,6 +28,7 @@ public class UserController {
     public String getAllUsers(Model model) {
         List<UserDto> userDtos = userService.getAllUsers();
         model.addAttribute("users", userDtos);
+        System.out.println(userService.countAllUsers());
         return "users";
     }
 

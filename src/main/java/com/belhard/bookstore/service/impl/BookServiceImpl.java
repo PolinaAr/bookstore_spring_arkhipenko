@@ -97,7 +97,11 @@ public class BookServiceImpl implements BookService {
     private Book toBook(BookDto bookDto) {
         Book book = new Book();
         book.setId(bookDto.getId());
-        book.setIsbn(bookDto.getIsbn());
+        if (bookDto.getIsbn().matches("\\d{3}-\\d-\\d{2}-\\d{6}-\\d")) {
+            book.setIsbn(bookDto.getIsbn());
+        } else {
+            throw new BookException("Illegal input of isbn. Book was not created");
+        }
         book.setTitle(bookDto.getTitle());
         book.setAuthor(bookDto.getAuthor());
         book.setPages(bookDto.getPages());

@@ -22,5 +22,5 @@ public interface UserService {
 
     boolean validateUser(String email, String password);
 
-    int countAllUsers();
+    Long countAllUsers();
 }

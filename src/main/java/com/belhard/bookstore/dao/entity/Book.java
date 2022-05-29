@@ -120,12 +120,12 @@ public class Book {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return pages == book.pages && deleted == book.deleted && Objects.equals(isbn, book.isbn) && Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.equals(price, book.price) && cover == book.cover;
+        return pages == book.pages && Objects.equals(isbn, book.isbn) && Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.equals(price, book.price) && cover == book.cover;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isbn, title, author, pages, price, deleted, cover);
+        return Objects.hash(isbn, title, author, pages, price, cover);
     }
 
     @Override
@@ -137,7 +137,6 @@ public class Book {
                 ", author='" + author + '\'' +
                 ", pages=" + pages +
                 ", price=" + price +
-                ", deleted=" + deleted +
                 ", cover=" + cover +
                 '}';
     }

@@ -1,18 +1,10 @@
 package com.belhard.bookstore.dao.impl;
 
 import com.belhard.bookstore.dao.BookDao;
-import com.belhard.bookstore.dao.RowMappers.BookRowMapper;
 import com.belhard.bookstore.dao.entity.Book;
 import com.belhard.bookstore.exceptions.BookException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityExistsException;
@@ -20,10 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Repository("bookDao")
 public class BookDaoJdbcImpl implements BookDao {
@@ -52,6 +41,7 @@ public class BookDaoJdbcImpl implements BookDao {
             manager.clear();
             return book;
         } catch (NoResultException e) {
+            logger.info("The book was not received by id", e);
             return null;
         }
     }
