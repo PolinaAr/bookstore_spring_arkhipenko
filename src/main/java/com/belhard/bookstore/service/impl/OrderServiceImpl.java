@@ -1,7 +1,9 @@
 package com.belhard.bookstore.service.impl;
 
+import com.belhard.bookstore.dao.BookDao;
 import com.belhard.bookstore.dao.OrderDao;
 import com.belhard.bookstore.dao.OrderItemDao;
+import com.belhard.bookstore.dao.UserDao;
 import com.belhard.bookstore.dao.entity.Order;
 import com.belhard.bookstore.dao.entity.OrderItem;
 import com.belhard.bookstore.exceptions.OrderException;
@@ -23,17 +25,44 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger logger = LogManager.getLogger(OrderServiceImpl.class);
-    private final OrderDao orderDao;
-    private final OrderItemDao orderItemDao;
-    private final UserService userService;
-    private final BookService bookService;
+    private OrderDao orderDao;
+    private BookDao bookDao;
+    private UserDao userDao;
+    private OrderItemDao orderItemDao;
+    private UserService userService;
+    private BookService bookService;
+
+    public OrderServiceImpl() {
+    }
 
     @Autowired
-    public OrderServiceImpl(OrderDao orderDao, OrderItemDao orderItemDao, UserService userService, BookService bookService) {
+    public void setOrderDao(OrderDao orderDao) {
         this.orderDao = orderDao;
+    }
+
+    @Autowired
+    public void setBookDao(BookDao bookDao) {
+        this.bookDao = bookDao;
+    }
+
+    @Autowired
+    public void setOrderItemDao(OrderItemDao orderItemDao) {
         this.orderItemDao = orderItemDao;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    @Autowired
+    public void setBookService(BookService bookService) {
         this.bookService = bookService;
+    }
+
+    @Autowired
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     @Override
@@ -60,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderDto toDto(Order order) {
         OrderDto orderDto = new OrderDto();
         orderDto.setId(order.getId());
-        orderDto.setUserDto(userService.getUserById(order.getUserId()));
+        orderDto.setUserDto(userService.getUserById(order.getUser().getId()));
         orderDto.setTotalCost(order.getTotalCost());
         orderDto.setTimestamp(order.getTimestamp());
         orderDto.setStatus(Order.Status.valueOf(order.getStatus().toString().toUpperCase()));
@@ -69,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItem orderItem : orderItems) {
             OrderItemDto orderItemDto = new OrderItemDto();
             orderItemDto.setId(orderItem.getId());
-            orderItemDto.setBookDto(bookService.getBookById(orderItem.getBookId()));
+            orderItemDto.setBookDto(bookService.getBookById(orderItem.getBook().getId()));
             orderItemDto.setQuantity(orderItem.getQuantity());
             orderItemDto.setPrice(orderItem.getPrice());
             dtos.add(orderItemDto);
@@ -91,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItemDto itemDto : items) {
             itemDto.setOrderId(created.getId());
         }
-        createOrderItem(items, toDto(created));/////
+        createOrderItem(items, toDto(created));
         return getById(created.getId());
     }
 
@@ -123,17 +152,17 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderItem itemToEntity(OrderItemDto itemDto) {
         OrderItem orderItem = new OrderItem();
-        orderItem.setOrderId(itemDto.getOrderId());
+        orderItem.setOrder(orderDao.getOrderById(itemDto.getOrderId()));
         orderItem.setPrice(itemDto.getPrice());
         orderItem.setQuantity(itemDto.getQuantity());
-        orderItem.setBookId(itemDto.getBookDto().getId());
+        orderItem.setBook(bookDao.getBookById(itemDto.getBookDto().getId()));
         return orderItem;
     }
 
     private Order toEntity(OrderDto orderDto) {
         Order entity = new Order();
         entity.setId(orderDto.getId());
-        entity.setUserId(orderDto.getUserDto().getId());
+        entity.setUser(userDao.getUserById(orderDto.getUserDto().getId()));
         BigDecimal totalCost = calculateTotalCost(orderDto);
         entity.setTotalCost(totalCost);
         entity.setStatus(Order.Status.valueOf(orderDto.getStatus().toString().toUpperCase()));

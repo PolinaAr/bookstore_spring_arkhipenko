@@ -1,18 +1,39 @@
 package com.belhard.bookstore.dao.entity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "orders")
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    private Long userId;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
+    @Column(name = "total_cost", nullable = false)
     private BigDecimal totalCost;
+
+    @Column(name = "timestamp")
     private LocalDateTime timestamp;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> items;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "status_id")
     private Status status;
 
     public enum Status {
-        CANCELED, COMPLETED, AWAITING_PAYMENT, IN_WAY, PROCESSING
+        OTHER, CANCELED, COMPLETED, AWAITING_PAYMENT, IN_WAY, PROCESSING
     }
 
     public Long getId() {
@@ -23,12 +44,12 @@ public class Order {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public BigDecimal getTotalCost() {
@@ -55,27 +76,32 @@ public class Order {
         this.status = status;
     }
 
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return Objects.equals(userId, order.userId)
-                && Objects.equals(totalCost, order.totalCost)
-                && Objects.equals(timestamp, order.timestamp)
-                && status == order.status;
+        return Objects.equals(user, order.user) && Objects.equals(totalCost, order.totalCost) && Objects.equals(timestamp, order.timestamp) && status == order.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, totalCost, timestamp, status);
+        return Objects.hash(user, totalCost, timestamp, status);
     }
 
     @Override
     public String toString() {
         return "\nOrder{" +
                 "id=" + id +
-                ", userId=" + userId +
+                ", user=" + user +
                 ", totalCost=" + totalCost +
                 ", timestamp=" + timestamp +
                 ", status=" + status +
