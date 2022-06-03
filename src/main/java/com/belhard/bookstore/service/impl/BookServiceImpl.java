@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +124,7 @@ public class BookServiceImpl implements BookService {
             throw new BookException("The book is not updated");
         }
         BookDto updatedBookDto = toDto(updatedBook);
-        return getBookById(updatedBookDto.getId());
+        return updatedBookDto;
     }
 
     @Override

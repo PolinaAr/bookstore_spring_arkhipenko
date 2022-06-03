@@ -28,7 +28,6 @@ public class UserController {
     public String getAllUsers(Model model) {
         List<UserDto> userDtos = userService.getAllUsers();
         model.addAttribute("users", userDtos);
-        System.out.println(userService.countAllUsers());
         return "users";
     }
 
@@ -39,6 +38,7 @@ public class UserController {
             model.addAttribute("user", userDto);
             return "getUser";
         } catch (UserException e) {
+            model.addAttribute("message", "This user is not found.");
             return "error";
         }
     }
@@ -63,6 +63,7 @@ public class UserController {
             model.addAttribute("user", created);
             return "getUser";
         } catch (UserException e) {
+            model.addAttribute("message", "This user is not created.");
             return "error";
         }
 

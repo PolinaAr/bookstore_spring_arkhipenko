@@ -1,5 +1,6 @@
 package com.belhard.bookstore.controller;
 
+import com.belhard.bookstore.exceptions.OrderException;
 import com.belhard.bookstore.service.OrderService;
 import com.belhard.bookstore.service.dto.OrderDto;
 import com.belhard.bookstore.service.dto.OrderItemDto;
@@ -30,16 +31,20 @@ public class OrderController {
     public String getAllOrders(Model model) {
         List<OrderDto> orders = orderService.getAllOrders();
         model.addAttribute("orders", orders);
-        OrderDto orderDto = orders.get(1);
         return "orders";
     }
 
     @GetMapping("/{id}")
     public String getOrderById(Model model, @PathVariable Long id) {
-        OrderDto orderDto = orderService.getById(id);
-        model.addAttribute("order", orderDto);
-        List<OrderItemDto> items = orderDto.getItems();
-        model.addAttribute("items", items);
-        return "getOrder";
+        try {
+            OrderDto orderDto = orderService.getById(id);
+            model.addAttribute("order", orderDto);
+            List<OrderItemDto> items = orderDto.getItems();
+            model.addAttribute("items", items);
+            return "getOrder";
+        } catch (OrderException e) {
+            model.addAttribute("message", "This order ia not found");
+            return "error";
+        }
     }
 }

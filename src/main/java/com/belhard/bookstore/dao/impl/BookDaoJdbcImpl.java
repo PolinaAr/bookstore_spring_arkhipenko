@@ -87,7 +87,6 @@ public class BookDaoJdbcImpl implements BookDao {
     public Book updateBook(Book book) {
         try {
             manager.merge(book);
-            manager.clear();
             return book;
         } catch (IllegalArgumentException e) {
             logger.error("The book has not been updated", e);
@@ -102,7 +101,6 @@ public class BookDaoJdbcImpl implements BookDao {
             Book book = manager.find(Book.class, id);
             book.setDeleted(true);
             manager.merge(book);
-            manager.clear();
             return true;
         } catch (IllegalArgumentException e) {
             logger.error("The book is not deleted.", e);
