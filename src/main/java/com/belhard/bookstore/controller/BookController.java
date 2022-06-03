@@ -55,7 +55,7 @@ public class BookController {
     @ResponseStatus(HttpStatus.CREATED)
     public String createBook (Model model, @RequestParam Map<String, Object> params) {
         try {
-            BookDto created = bookService.createBook(createBookDto(params));
+            BookDto created = bookService.createBook(setBookDto(params));
             model.addAttribute("book", created);
             return "book/getBook";
         } catch (BookException e) {
@@ -64,7 +64,7 @@ public class BookController {
         }
     }
 
-    private BookDto createBookDto(Map<String, Object> params) {
+    private BookDto setBookDto(Map<String, Object> params) {
         BookDto bookDto = new BookDto();
         bookDto.setIsbn(params.get("isbn").toString());
         bookDto.setTitle(params.get("title").toString());
@@ -85,7 +85,7 @@ public class BookController {
     @PostMapping("/{id}")
     public String updateBook (Model model, @RequestParam Map<String, Object> params, @PathVariable Long id){
         try {
-            BookDto bookDto = createBookDto(params);
+            BookDto bookDto = setBookDto(params);
             bookDto.setId(id);
             BookDto updated = bookService.updateBook(bookDto);
             model.addAttribute("book", updated);
@@ -100,7 +100,7 @@ public class BookController {
     public String deleteBook(Model model, @PathVariable Long id) {
         try {
             bookService.deleteBook(id);
-            model.addAttribute("message", "The book with id " + id + " successfully deleted.");
+            model.addAttribute("message", "The book with id " + id + " is successfully deleted.");
             return "delete";
         } catch (BookException e) {
             model.addAttribute("message", "The book is not deleted");

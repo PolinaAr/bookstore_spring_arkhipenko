@@ -18,6 +18,12 @@
         <p>Email = ${user.email} </p>
         <p>Password = ${user.password} </p>
         <p>Birthday = ${user.birthday} </p>
+        <form action="http://localhost:8080/users/edit/${user.id}" method="get">
+            <button>Edit user</button>
+        </form>
+        <form action="http://localhost:8080/users/delete/${user.id}" method="post">
+            <button>Delete user</button>
+        </form>
     </div>
 </body>
 </html>

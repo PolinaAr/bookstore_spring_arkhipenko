@@ -84,7 +84,6 @@ public class UserDaoJdbcImpl implements UserDao {
     public User updateUser(User user) {
         try {
             manager.merge(user);
-            manager.clear();
             return user;
         } catch (IllegalArgumentException e) {
             logger.error("The user is not updated.");
