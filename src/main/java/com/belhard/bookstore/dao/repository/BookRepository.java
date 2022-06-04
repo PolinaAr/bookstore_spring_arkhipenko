@@ -1,6 +1,6 @@
 package com.belhard.bookstore.dao.repository;
 
-import com.belhard.bookstore.dao.entity.User;
+import com.belhard.bookstore.dao.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,18 +9,18 @@ import org.springframework.data.repository.query.Param;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface BookRepository extends JpaRepository<Book, Long> {
 
-    Iterable<User> findUsersByDeletedFalse();
+    Iterable<Book> findBooksByDeletedFalse();
 
-    Optional<User> findUserByEmail(String email);
+    Optional<Book> findBookByIsbn(String isbn);
 
-    Iterable<User> findUsersByLastName(String lastName);
+    Iterable<Book> findBooksByAuthor(String author);
 
-    Long countUserByDeletedFalse();
+    Long countBookByDeletedFalse();
 
     @Transactional
     @Modifying
-    @Query("UPDATE User SET deleted = true where id = :id")
+    @Query("UPDATE Book SET deleted = true where id = :id")
     void softDelete(@Param("id") Long id);
 }

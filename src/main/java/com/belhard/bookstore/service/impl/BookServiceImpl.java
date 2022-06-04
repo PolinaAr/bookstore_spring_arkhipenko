@@ -2,11 +2,14 @@ package com.belhard.bookstore.service.impl;
 
 import com.belhard.bookstore.dao.entity.Book;
 import com.belhard.bookstore.dao.BookDao;
+import com.belhard.bookstore.dao.repository.BookRepository;
 import com.belhard.bookstore.exceptions.BookException;
+import com.belhard.bookstore.exceptions.UserException;
 import com.belhard.bookstore.service.BookService;
 import com.belhard.bookstore.service.dto.BookDto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.hql.internal.QueryExecutionRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,23 +17,27 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service("bookService")
 public class BookServiceImpl implements BookService {
 
-    private final BookDao bookDao;
+    private BookRepository bookRepository;
 
     private static final Logger logger = LogManager.getLogger(BookServiceImpl.class);
 
+    public BookServiceImpl() {
+    }
+
     @Autowired
-    public BookServiceImpl(BookDao bookDao) {
-        this.bookDao = bookDao;
+    public void setBookRepository(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
     @Override
     public List<BookDto> getAllBooks() {
         logger.debug("Call method getAllBook");
-        List<Book> books = bookDao.getAllBooks();
+        Iterable<Book> books = bookRepository.findBooksByDeletedFalse();
         List<BookDto> dtos = new ArrayList<>();
         for (Book book : books) {
             BookDto bookDto = toDto(book);
@@ -42,27 +49,23 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto getBookById(Long id) {
         logger.debug("Call method getBookById");
-        Book book = bookDao.getBookById(id);
-        if (book == null) {
-            throw new BookException("There is no book with id = " + id);
-        }
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new UserException("There is no book with id " + id));
         return toDto(book);
     }
 
     @Override
     public BookDto getBookByIsbn(String isbn) {
         logger.debug("Call method getBookByIsbn");
-        Book book = bookDao.getBookByIsbn(isbn);
-        if (book == null) {
-            throw new BookException("There is no book with isbn = " + isbn);
-        }
+        Book book = bookRepository.findBookByIsbn(isbn)
+                .orElseThrow(() -> new UserException("There is no user with isbn " + isbn));
         return toDto(book);
     }
 
     @Override
     public List<BookDto> getBookByAuthor(String author) {
         logger.debug("Call method getBookByAuthor");
-        List<Book> books = bookDao.getBookByAuthor(author);
+        Iterable<Book> books = bookRepository.findBooksByAuthor(author);
         List<BookDto> dtos = new ArrayList<>();
         for (Book book : books) {
             BookDto bookDto = toDto(book);
@@ -84,15 +87,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto createBook(BookDto bookDto) {
+    public BookDto saveBook(BookDto bookDto) {
         logger.debug("Call method createBook");
-        Book bookToCreate = toBook(bookDto);
-        Book createdBook = bookDao.createBook(bookToCreate);
-        if (createdBook == null) {
+        try {
+            Book createdBook = bookRepository.save(toBook(bookDto));
+            BookDto createdBookDto = toDto(createdBook);
+            return getBookById(createdBookDto.getId());
+        } catch (IllegalArgumentException e) {
             throw new BookException("The book is not created");
         }
-        BookDto createdBookDto = toDto(createdBook);
-        return getBookById(createdBookDto.getId());
     }
 
     private Book toBook(BookDto bookDto) {
@@ -112,33 +115,19 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto updateBook(BookDto bookDto) {
-        logger.debug("Call method updateBook");
-        Book bookToUpdate = toBook(bookDto);
-        Book existing = bookDao.getBookByIsbn(bookToUpdate.getIsbn());
-        if (existing != null && existing.getId() != bookDto.getId()) {
-            throw new BookException("You can't update this book. Book with id " + bookDto.getId() + " already exist");
-        }
-        Book updatedBook = bookDao.updateBook(bookToUpdate);
-        if (updatedBook == null) {
-            throw new BookException("The book is not updated");
-        }
-        BookDto updatedBookDto = toDto(updatedBook);
-        return updatedBookDto;
-    }
-
-    @Override
     public void deleteBook(Long id) {
         logger.debug("Call method deleteBook");
-        if (!bookDao.deleteBook(id)) {
-            throw new BookException("The book is not deleted");
+        try {
+            bookRepository.softDelete(id);
+        } catch (QueryExecutionRequestException e) {
+            throw new BookException("The book with id " + id + " was not deleted");
         }
     }
 
     @Override
     public Long countAllBooks() {
         logger.debug("Call method countAllBooks");
-        return bookDao.countAllBooks();
+        return bookRepository.countBookByDeletedFalse();
     }
 
     @Override
@@ -146,7 +135,7 @@ public class BookServiceImpl implements BookService {
         logger.debug("Call method countPriceByAuthor");
         List<BookDto> dtos = getBookByAuthor(author);
         if (dtos.isEmpty()) {
-            throw new BookException("There is no books with such author");
+            throw new BookException("There is no books with such author: " + author);
         }
         BigDecimal allPrice = BigDecimal.ZERO;
         for (BookDto bookDto : dtos) {

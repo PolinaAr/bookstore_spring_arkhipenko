@@ -55,7 +55,7 @@ public class BookController {
     @ResponseStatus(HttpStatus.CREATED)
     public String createBook (Model model, @RequestParam Map<String, Object> params) {
         try {
-            BookDto created = bookService.createBook(setBookDto(params));
+            BookDto created = bookService.saveBook(setBookDto(params));
             model.addAttribute("book", created);
             return "book/getBook";
         } catch (BookException e) {
@@ -87,7 +87,7 @@ public class BookController {
         try {
             BookDto bookDto = setBookDto(params);
             bookDto.setId(id);
-            BookDto updated = bookService.updateBook(bookDto);
+            BookDto updated = bookService.saveBook(bookDto);
             model.addAttribute("book", updated);
             return "book/getBook";
         } catch (BookException e){

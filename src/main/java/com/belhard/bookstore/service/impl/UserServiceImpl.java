@@ -131,6 +131,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long countAllUsers() {
         logger.debug("Call method countAllUsers");
-        return userRepository.countUsers();
+        return userRepository.countUserByDeletedFalse();
     }
 }
