@@ -69,6 +69,16 @@ VALUES('canceled'),
       ('in_way'),
       ('processing');
 
+INSERT INTO orders (user_id, total_cost, status_id)
+VALUES ((SELECT id FROM users WHERE email = 'lauren@tut.by'), 176.6 , (SELECT id FROM status WHERE name = 'awaiting_payment')),
+       ((SELECT id FROM users WHERE email = 'willjo@gmail.com'), 82.5 , (SELECT id FROM status WHERE name = 'canceled')),
+       ((SELECT id FROM users WHERE email = 'chris025@gmail.com'), 82.47 , (SELECT id FROM status WHERE name = 'completed')),
+       ((SELECT id FROM users WHERE email = 'lauren@tut.by'), 151.02 , (SELECT id FROM status WHERE name = 'in_way')),
+       ((SELECT id FROM users WHERE email = 'badboy1@mail.ru'), 61.25 , (SELECT id FROM status WHERE name = 'processing')),
+       ((SELECT id FROM users WHERE email = 'bar007@tut.by'), 43.04 , (SELECT id FROM status WHERE name = 'awaiting_payment')),
+       ((SELECT id FROM users WHERE email = 'naomi87@gmail.com'), 29.15 , (SELECT id FROM status WHERE name = 'in_way')),
+       ((SELECT id FROM users WHERE email = 'jondi@mail.ru'), 54.98 , (SELECT id FROM status WHERE name = 'processing'));
+
 INSERT INTO orderItem (order_id, book_id, quantity, price)
 VALUES(1, (SELECT id FROM books WHERE isbn = '978-5-17-072346-1'), 1, (SELECT price FROM books WHERE isbn = '978-5-17-072346-1')),
       (1, (SELECT id FROM books WHERE isbn = '978-5-17-092791-3'), 2, (SELECT price FROM books WHERE isbn = '978-5-17-092791-3')),
@@ -87,13 +97,3 @@ VALUES(1, (SELECT id FROM books WHERE isbn = '978-5-17-072346-1'), 1, (SELECT pr
       (7, (SELECT id FROM books WHERE isbn = '978-5-69-993667-0'), 1, (SELECT price FROM books WHERE isbn = '978-5-69-993667-0')),
       (7, (SELECT id FROM books WHERE isbn = '978-5-17-080115-2'), 1, (SELECT price FROM books WHERE isbn = '978-5-17-080115-2')),
       (8, (SELECT id FROM books WHERE isbn = '978-5-00-131235-2'), 2, (SELECT price FROM books WHERE isbn = '978-5-00-131235-2'));
-
-INSERT INTO orders (user_id, total_cost, status_id)
-VALUES ((SELECT id FROM users WHERE email = 'lauren@tut.by'), 176.6 , (SELECT id FROM status WHERE name = 'awaiting_payment')),
-       ((SELECT id FROM users WHERE email = 'willjo@gmail.com'), 82.5 , (SELECT id FROM status WHERE name = 'canceled')),
-       ((SELECT id FROM users WHERE email = 'chris025@gmail.com'), 82.47 , (SELECT id FROM status WHERE name = 'completed')),
-       ((SELECT id FROM users WHERE email = 'lauren@tut.by'), 151.02 , (SELECT id FROM status WHERE name = 'in_way')),
-       ((SELECT id FROM users WHERE email = 'badboy1@mail.ru'), 61.25 , (SELECT id FROM status WHERE name = 'processing')),
-       ((SELECT id FROM users WHERE email = 'bar007@tut.by'), 43.04 , (SELECT id FROM status WHERE name = 'awaiting_payment')),
-       ((SELECT id FROM users WHERE email = 'naomi87@gmail.com'), 29.15 , (SELECT id FROM status WHERE name = 'in_way')),
-       ((SELECT id FROM users WHERE email = 'jondi@mail.ru'), 54.98 , (SELECT id FROM status WHERE name = 'processing'));

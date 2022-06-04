@@ -21,7 +21,7 @@
     <c:forEach items="${orders}" var="order">
         <tr>
             <td> ${order.id} </td>
-            <td><a href="http://localhost:8080/orders/${order.id}"> ${order.userDto.getName()} ${order.userDto.getLastName()}</a></td>
+            <td><a href="/orders/${order.id}"> ${order.userDto.getName()} ${order.userDto.getLastName()}</a></td>
             <td> ${order.totalCost} </td>
             <td> ${order.status} </td>
         </tr>

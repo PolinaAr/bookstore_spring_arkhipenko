@@ -1,20 +1,43 @@
 package com.belhard.bookstore.dao.entity;
 
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "users")
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "name", length = 50, nullable = false)
     private String name;
+
+    @Column(name = "lastname", length = 50, nullable = false)
     private String lastName;
-    private Role role;
+
+    @Column(name = "email", length = 50, nullable = false, unique = true)
     private String email;
+
+    @Column(name = "password", length = 50, nullable = false)
     private String password;
+
+    @Column(name = "birthday")
     private LocalDate birthday;
 
+    @Column(name = "deleted")
+    private boolean deleted = false;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "role_id")
+    private Role role;
+
     public enum Role {
-        ADMIN, MANAGER, CUSTOMER
+        OTHER, ADMIN, MANAGER, CUSTOMER;
     }
 
     public User() {
@@ -83,6 +106,14 @@ public class User {
 
     public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,10 +87,6 @@ public class BookServiceImpl implements BookService {
     public BookDto createBook(BookDto bookDto) {
         logger.debug("Call method createBook");
         Book bookToCreate = toBook(bookDto);
-        Book existing = bookDao.getBookByIsbn(bookToCreate.getIsbn());
-        if (existing != null) {
-            throw new BookException("This book is already exist.");
-        }
         Book createdBook = bookDao.createBook(bookToCreate);
         if (createdBook == null) {
             throw new BookException("The book is not created");
@@ -101,7 +98,11 @@ public class BookServiceImpl implements BookService {
     private Book toBook(BookDto bookDto) {
         Book book = new Book();
         book.setId(bookDto.getId());
-        book.setIsbn(bookDto.getIsbn());
+        if (bookDto.getIsbn().matches("\\d{3}-\\d-\\d{2}-\\d{6}-\\d")) {
+            book.setIsbn(bookDto.getIsbn());
+        } else {
+            throw new BookException("Illegal input of isbn. Book was not created");
+        }
         book.setTitle(bookDto.getTitle());
         book.setAuthor(bookDto.getAuthor());
         book.setPages(bookDto.getPages());
@@ -123,7 +124,7 @@ public class BookServiceImpl implements BookService {
             throw new BookException("The book is not updated");
         }
         BookDto updatedBookDto = toDto(updatedBook);
-        return getBookById(updatedBookDto.getId());
+        return updatedBookDto;
     }
 
     @Override
@@ -135,7 +136,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public int countAllBooks() {
+    public Long countAllBooks() {
         logger.debug("Call method countAllBooks");
         return bookDao.countAllBooks();
     }

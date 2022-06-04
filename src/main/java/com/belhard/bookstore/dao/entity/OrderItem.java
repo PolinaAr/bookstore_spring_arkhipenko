@@ -1,13 +1,30 @@
 package com.belhard.bookstore.dao.entity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+@Entity
+@Table(name = "orderitem")
 public class OrderItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    private Long orderId;
-    private Long bookId;
+
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    private Order order;
+
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "book_id", referencedColumnName = "id")
+    private Book book;
+
+    @Column(name = "quantity", nullable = false)
     private int quantity;
+
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
 
     public Long getId() {
@@ -18,20 +35,20 @@ public class OrderItem {
         this.id = id;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
-    public Long getBookId() {
-        return bookId;
+    public Book getBook() {
+        return book;
     }
 
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
+    public void setBook(Book book) {
+        this.book = book;
     }
 
     public int getQuantity() {
@@ -55,23 +72,19 @@ public class OrderItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderItem orderItem = (OrderItem) o;
-        return quantity == orderItem.quantity
-                && Objects.equals(orderId, orderItem.orderId)
-                && Objects.equals(bookId, orderItem.bookId)
-                && Objects.equals(price, orderItem.price);
+        return quantity == orderItem.quantity && Objects.equals(order, orderItem.order) && Objects.equals(book, orderItem.book) && Objects.equals(price, orderItem.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bookId, quantity, price);
+        return Objects.hash(order, book, quantity, price);
     }
 
     @Override
     public String toString() {
         return "\nOrderItem{" +
-                "id=" + id +
-                ", orderId=" + orderId +
-                ", bookId=" + bookId +
+                ", order=" + order +
+                ", book=" + book +
                 ", quantity=" + quantity +
                 ", price=" + price +
                 '}';

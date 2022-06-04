@@ -82,10 +82,6 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
         logger.debug("Call method createUser");
         User userToCreate = toUser(userDto);
-        User existing = userDao.getUserByEmail(userToCreate.getEmail());
-        if (existing != null) {
-            throw new UserException("This user is already exist.");
-        }
         User createdUser = userDao.createUser(userToCreate);
         if (createdUser == null) {
             throw new UserException("The user is not created");
@@ -100,7 +96,11 @@ public class UserServiceImpl implements UserService {
         user.setName(userDto.getName());
         user.setLastName(userDto.getLastName());
         user.setRole(User.Role.valueOf(userDto.getRole().toString()));
-        user.setEmail(userDto.getEmail());
+        if(userDto.getEmail().matches("\\w+@[a-z]+\\.[a-z]+")){
+            user.setEmail(userDto.getEmail());
+        } else {
+            throw new UserException("Illegal input of email.");
+        }
         user.setPassword(userDto.getPassword());
         user.setBirthday(userDto.getBirthday());
         return user;
@@ -142,7 +142,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int countAllUsers() {
+    public Long countAllUsers() {
         logger.debug("Call method countAllUsers");
         return userDao.countAllUsers();
     }
