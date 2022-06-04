@@ -15,7 +15,7 @@ public class Order {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
@@ -25,7 +25,7 @@ public class Order {
     @Column(name = "timestamp")
     private LocalDateTime timestamp;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<OrderItem> items;
 
     @Enumerated(EnumType.ORDINAL)

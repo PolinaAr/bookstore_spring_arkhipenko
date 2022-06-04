@@ -2,7 +2,6 @@ package com.belhard.bookstore.dao.impl;
 
 import com.belhard.bookstore.dao.OrderDao;
 import com.belhard.bookstore.dao.entity.Order;
-import com.belhard.bookstore.dao.entity.OrderItem;
 import com.belhard.bookstore.exceptions.OrderException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -31,7 +31,7 @@ public class OrderController {
     public String getAllOrders(Model model) {
         List<OrderDto> orders = orderService.getAllOrders();
         model.addAttribute("orders", orders);
-        return "orders";
+        return "order/orders";
     }
 
     @GetMapping("/{id}")
@@ -41,9 +41,9 @@ public class OrderController {
             model.addAttribute("order", orderDto);
             List<OrderItemDto> items = orderDto.getItems();
             model.addAttribute("items", items);
-            return "getOrder";
+            return "order/getOrder";
         } catch (OrderException e) {
-            model.addAttribute("message", "This order ia not found");
+            model.addAttribute("message", "This order is not found");
             return "error";
         }
     }

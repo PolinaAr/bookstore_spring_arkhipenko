@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> getAllOrders() {
         List<Order> orders = orderDao.getAllOrders();
         List<OrderDto> dtos = new ArrayList<>();
-        for (Order order : orders){
+        for (Order order : orders) {
             OrderDto orderDto = toDto(order);
             dtos.add(orderDto);
         }
@@ -136,6 +137,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderDto updateOrder(OrderDto orderDto) {
         Order entity = toEntity(orderDto);
         Order updatedOrder = orderDao.updateOrder(entity);
@@ -182,9 +184,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(Long id) {
-        if (!orderDao.deleteOrder(id)){
+        if (!orderDao.deleteOrder(id)) {
             throw new OrderException("The book was not deleted.");
-        };
+        }
+        ;
     }
 
 

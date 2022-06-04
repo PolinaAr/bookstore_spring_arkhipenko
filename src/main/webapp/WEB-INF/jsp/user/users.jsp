@@ -13,7 +13,7 @@
     <h1>Users</h1>
 </div>
 <div class="mainPart">
-    <form action="http://localhost:8080/users/create">
+    <form action="/users/create">
         <button>Add user</button>
     </form>
     <table>
@@ -27,7 +27,7 @@
         <c:forEach items="${users}" var="user">
             <tr>
                 <td>${user.id} </td>
-                <td><a href="http://localhost:8080/users/${user.id}">${user.name}</a></td>
+                <td><a href="/users/${user.id}">${user.name}</a></td>
                 <td>${user.lastName}</td>
                 <td>${user.role.toString().toLowerCase()}</td>
                 <td>${user.birthday}</td>

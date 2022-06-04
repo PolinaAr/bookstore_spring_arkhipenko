@@ -12,7 +12,7 @@
     <h1>Books</h1>
 </div>
 <div class="mainPart">
-    <form action="http://localhost:8080/books/create">
+    <form action="/books/create">
         <button>Add book</button>
     </form>
         <table>
@@ -26,7 +26,7 @@
                 <tr>
                     <td> ${book.id} </td>
                     <td> ${book.isbn} </td>
-                    <td><a href="http://localhost:8080/books/${book.id}"> ${book.title} </a></td>
+                    <td><a href="/books/${book.id}"> ${book.title} </a></td>
                     <td> ${book.author} </td>
                 </tr>
             </c:forEach>
