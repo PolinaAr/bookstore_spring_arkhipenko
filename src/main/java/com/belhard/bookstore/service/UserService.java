@@ -14,9 +14,7 @@ public interface UserService {
 
     List<UserDto> getUserByLastName(String lastName);
 
-    UserDto createUser(UserDto userDto);
-
-    UserDto updateUser(UserDto user);
+    UserDto saveUser(UserDto userDto);
 
     void deleteUser(Long id);
 

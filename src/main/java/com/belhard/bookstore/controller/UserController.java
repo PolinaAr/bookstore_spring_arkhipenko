@@ -53,7 +53,7 @@ public class UserController {
     public String createUser(Model model, @RequestParam Map<String, Object> params) {
         try {
             UserDto userDto = setUserDto(params);
-            UserDto created = userService.createUser(userDto);
+            UserDto created = userService.saveUser(userDto);
             model.addAttribute("user", created);
             return "user/getUser";
         } catch (UserException e) {
@@ -86,7 +86,7 @@ public class UserController {
         try {
             UserDto userDto = setUserDto(params);
             userDto.setId(id);
-            UserDto updated = userService.updateUser(userDto);
+            UserDto updated = userService.saveUser((userDto));
             model.addAttribute("user", updated);
             return "user/getUser";
         } catch (UserException e) {
