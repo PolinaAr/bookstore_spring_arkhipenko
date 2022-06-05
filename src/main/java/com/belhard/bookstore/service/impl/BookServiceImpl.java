@@ -1,23 +1,25 @@
 package com.belhard.bookstore.service.impl;
 
 import com.belhard.bookstore.dao.entity.Book;
-import com.belhard.bookstore.dao.BookDao;
 import com.belhard.bookstore.dao.repository.BookRepository;
 import com.belhard.bookstore.exceptions.BookException;
 import com.belhard.bookstore.exceptions.UserException;
 import com.belhard.bookstore.service.BookService;
 import com.belhard.bookstore.service.dto.BookDto;
+import net.bytebuddy.TypeCache;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.hql.internal.QueryExecutionRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service("bookService")
 public class BookServiceImpl implements BookService {
@@ -35,9 +37,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> getAllBooks() {
+    public List<BookDto> getAllBooks(Pageable pageable) {
         logger.debug("Call method getAllBook");
-        Iterable<Book> books = bookRepository.findBooksByDeletedFalse();
+        Page<Book> books = bookRepository.findBooksByDeletedFalse(pageable);
         List<BookDto> dtos = new ArrayList<>();
         for (Book book : books) {
             BookDto bookDto = toDto(book);

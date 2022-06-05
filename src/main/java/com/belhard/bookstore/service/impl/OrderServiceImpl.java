@@ -1,9 +1,5 @@
 package com.belhard.bookstore.service.impl;
 
-import com.belhard.bookstore.dao.BookDao;
-import com.belhard.bookstore.dao.OrderDao;
-import com.belhard.bookstore.dao.OrderItemDao;
-import com.belhard.bookstore.dao.UserDao;
 import com.belhard.bookstore.dao.entity.Order;
 import com.belhard.bookstore.dao.entity.OrderItem;
 import com.belhard.bookstore.dao.repository.BookRepository;
@@ -20,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.hql.internal.QueryExecutionRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -74,8 +71,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> getAllOrders() {
-        Iterable<Order> orders = orderRepository.findAll();
+    public List<OrderDto> getAllOrders(Pageable pageable) {
+        Iterable<Order> orders = orderRepository.findAll(pageable);
         List<OrderDto> dtos = new ArrayList<>();
         for (Order order : orders) {
             OrderDto orderDto = toDto(order);
@@ -138,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
         Order entity = toEntity(orderDto);
         Order updated = orderRepository.save(entity);
 
-        Iterable<OrderItem> items =orderItemRepository.findOrderItemByOrder_Id(orderDto.getId());
+        Iterable<OrderItem> items = orderItemRepository.findOrderItemByOrder_Id(orderDto.getId());
         orderItemRepository.deleteAll(items);
 
         saveOrderItemDto(orderDto, updated);

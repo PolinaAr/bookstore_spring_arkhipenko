@@ -1,6 +1,8 @@
 package com.belhard.bookstore.dao.repository;
 
 import com.belhard.bookstore.dao.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +13,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Iterable<User> findUsersByDeletedFalse();
+    Page<User> findUsersByDeletedFalse(Pageable pageable);
 
     Optional<User> findUserByEmail(String email);
 

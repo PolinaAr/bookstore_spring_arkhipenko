@@ -1,6 +1,8 @@
 package com.belhard.bookstore.dao.repository;
 
 import com.belhard.bookstore.dao.entity.Book;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +13,7 @@ import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-    Iterable<Book> findBooksByDeletedFalse();
+    Page<Book> findBooksByDeletedFalse(Pageable pageable);
 
     Optional<Book> findBookByIsbn(String isbn);
 

@@ -10,6 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.hql.internal.QueryExecutionRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,9 +32,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<UserDto> getAllUsers(Pageable pageable) {
         logger.debug("Call method getAllUsers");
-        Iterable<User> users = userRepository.findUsersByDeletedFalse();
+        Page<User> users = userRepository.findUsersByDeletedFalse(pageable);
         List<UserDto> userDtos = new ArrayList<>();
         for (User user : users) {
             userDtos.add(toDto(user));
