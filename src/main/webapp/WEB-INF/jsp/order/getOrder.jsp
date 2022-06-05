@@ -17,7 +17,7 @@
     <p>Shopping list:</br>
         <c:forEach items="${items}" var="item">
             &nbsp&nbsp&nbsp&nbsp<a href="/books/${item.bookDto.getId()}">${item.bookDto.getId()}</a>.
-            ${item.bookDto.getAuthor()} "${item.bookDto.getTitle()}"</br>
+            ${item.bookDto.getAuthor()} "${item.bookDto.getTitle()}" - ${item.quantity} quantity</br>
         </c:forEach></p>
     <p>Order date = ${order.timestamp}</p>
     <p>Status = ${order.status.toString().toLowerCase()}</p>

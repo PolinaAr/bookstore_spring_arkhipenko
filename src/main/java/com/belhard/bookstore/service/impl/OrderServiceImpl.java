@@ -6,6 +6,10 @@ import com.belhard.bookstore.dao.OrderItemDao;
 import com.belhard.bookstore.dao.UserDao;
 import com.belhard.bookstore.dao.entity.Order;
 import com.belhard.bookstore.dao.entity.OrderItem;
+import com.belhard.bookstore.dao.repository.BookRepository;
+import com.belhard.bookstore.dao.repository.OrderItemRepository;
+import com.belhard.bookstore.dao.repository.OrderRepository;
+import com.belhard.bookstore.dao.repository.UserRepository;
 import com.belhard.bookstore.exceptions.OrderException;
 import com.belhard.bookstore.service.BookService;
 import com.belhard.bookstore.service.OrderService;
@@ -14,11 +18,13 @@ import com.belhard.bookstore.service.dto.OrderDto;
 import com.belhard.bookstore.service.dto.OrderItemDto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.hql.internal.QueryExecutionRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,29 +32,15 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger logger = LogManager.getLogger(OrderServiceImpl.class);
-    private OrderDao orderDao;
-    private BookDao bookDao;
-    private UserDao userDao;
-    private OrderItemDao orderItemDao;
+
     private UserService userService;
     private BookService bookService;
+    private OrderRepository orderRepository;
+    private OrderItemRepository orderItemRepository;
+    private UserRepository userRepository;
+    private BookRepository bookRepository;
 
     public OrderServiceImpl() {
-    }
-
-    @Autowired
-    public void setOrderDao(OrderDao orderDao) {
-        this.orderDao = orderDao;
-    }
-
-    @Autowired
-    public void setBookDao(BookDao bookDao) {
-        this.bookDao = bookDao;
-    }
-
-    @Autowired
-    public void setOrderItemDao(OrderItemDao orderItemDao) {
-        this.orderItemDao = orderItemDao;
     }
 
     @Autowired
@@ -62,13 +54,28 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Autowired
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
+    public void setOrderRepository(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    @Autowired
+    public void setOrderItemRepository(OrderItemRepository orderItemRepository) {
+        this.orderItemRepository = orderItemRepository;
+    }
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setBookRepository(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
     @Override
     public List<OrderDto> getAllOrders() {
-        List<Order> orders = orderDao.getAllOrders();
+        Iterable<Order> orders = orderRepository.findAll();
         List<OrderDto> dtos = new ArrayList<>();
         for (Order order : orders) {
             OrderDto orderDto = toDto(order);
@@ -79,11 +86,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto getById(Long id) {
-        Order order = orderDao.getOrderById(id);
-        if (order == null) {
-            logger.error("The order was not created");
-            throw new OrderException("The order was not created");
-        }
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderException("There is no order with id " + id));
         return toDto(order);
     }
 
@@ -94,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
         orderDto.setTotalCost(order.getTotalCost());
         orderDto.setTimestamp(order.getTimestamp());
         orderDto.setStatus(Order.Status.valueOf(order.getStatus().toString().toUpperCase()));
-        List<OrderItem> orderItems = orderItemDao.getByOrderId(order.getId());
+        Iterable<OrderItem> orderItems = orderItemRepository.findOrderItemByOrder_Id(order.getId());
         List<OrderItemDto> dtos = new ArrayList<>();
         for (OrderItem orderItem : orderItems) {
             OrderItemDto orderItemDto = new OrderItemDto();
@@ -111,64 +115,58 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto createOrder(OrderDto orderDto) {
-        Order toCreate = toEntity(orderDto);
-        Order created = orderDao.createOrder(toCreate);
-        if (created == null) {
-            logger.error("The order was not created");
-            throw new OrderException("The order was not created");
-        }
-        List<OrderItemDto> items = orderDto.getItems();
-        for (OrderItemDto itemDto : items) {
-            itemDto.setOrderId(created.getId());
-        }
-        createOrderItem(items, toDto(created));
+        Order order = toEntity(orderDto);
+        Order created = orderRepository.save(order);
+
+        saveOrderItemDto(orderDto, created);
         return getById(created.getId());
     }
 
-    private void createOrderItem(List<OrderItemDto> items, OrderDto orderDto) {
-        for (OrderItemDto itemDto : items) {
-            itemDto.setOrderId(orderDto.getId());
-            OrderItem createdOrderItem = orderItemDao.createOrderItem(itemToEntity(itemDto));
-            if (createdOrderItem == null) {
-                logger.error("The order item was not created");
-                throw new OrderException("The order item was not created");
-            }
+    private void saveOrderItemDto(OrderDto orderDto, Order created) {
+        List<OrderItemDto> itemsDto = orderDto.getItems();
+        List<OrderItem> items = new ArrayList<>();
+        for (OrderItemDto itemDto : itemsDto) {
+            itemDto.setOrderId(created.getId());
+            items.add(itemToEntity(itemDto));
         }
+        orderItemRepository.saveAll(items);
     }
 
     @Override
     @Transactional
     public OrderDto updateOrder(OrderDto orderDto) {
         Order entity = toEntity(orderDto);
-        Order updatedOrder = orderDao.updateOrder(entity);
-        if (updatedOrder == null) {
-            throw new OrderException("The order was not updated");
-        }
+        Order updated = orderRepository.save(entity);
 
-        List<OrderItem> items = orderItemDao.getByOrderId(orderDto.getId());
-        items.forEach(i -> orderItemDao.deleteOrderItem(i.getId()));
+        Iterable<OrderItem> items =orderItemRepository.findOrderItemByOrder_Id(orderDto.getId());
+        orderItemRepository.deleteAll(items);
 
-        createOrderItem(orderDto.getItems(), orderDto);
+        saveOrderItemDto(orderDto, updated);
         return getById(orderDto.getId());
     }
 
     private OrderItem itemToEntity(OrderItemDto itemDto) {
         OrderItem orderItem = new OrderItem();
-        orderItem.setOrder(orderDao.getOrderById(itemDto.getOrderId()));
-        orderItem.setPrice(itemDto.getPrice());
+        orderItem.setOrder(orderRepository.findById(itemDto.getOrderId())
+                .orElseThrow(() -> new OrderException("Error of setting order in orderItem")));
+        orderItem.setPrice(bookRepository.findById(itemDto.getBookDto().getId())
+                .orElseThrow(() -> new OrderException("Error of setting price in orderItem"))
+                .getPrice());
         orderItem.setQuantity(itemDto.getQuantity());
-        orderItem.setBook(bookDao.getBookById(itemDto.getBookDto().getId()));
+        orderItem.setBook(bookRepository.findById(itemDto.getBookDto().getId())
+                .orElseThrow(() -> new OrderException("Error of setting book in orderItem")));
         return orderItem;
     }
 
     private Order toEntity(OrderDto orderDto) {
         Order entity = new Order();
         entity.setId(orderDto.getId());
-        entity.setUser(userDao.getUserById(orderDto.getUserDto().getId()));
+        entity.setTimestamp(LocalDateTime.now());
+        entity.setUser(userRepository.findById(orderDto.getUserDto().getId())
+                .orElseThrow(() -> new OrderException("Error of setting user is order")));
         BigDecimal totalCost = calculateTotalCost(orderDto);
         entity.setTotalCost(totalCost);
         entity.setStatus(Order.Status.valueOf(orderDto.getStatus().toString().toUpperCase()));
-        entity.setTimestamp(orderDto.getTimestamp());
         return entity;
     }
 
@@ -176,7 +174,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItemDto> items = orderDto.getItems();
         BigDecimal totalCost = BigDecimal.ZERO;
         for (OrderItemDto item : items) {
-            BigDecimal itemCost = item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+            BigDecimal itemCost = item.getBookDto().getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
             totalCost = totalCost.add(itemCost);
         }
         return totalCost;
@@ -184,10 +182,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(Long id) {
-        if (!orderDao.deleteOrder(id)) {
-            throw new OrderException("The book was not deleted.");
+        try {
+            orderRepository.softDelete(id);
+        } catch (QueryExecutionRequestException e) {
+            throw new OrderException("The order with id " + id + " was not created");
         }
-        ;
     }
 
 
