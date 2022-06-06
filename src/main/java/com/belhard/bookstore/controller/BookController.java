@@ -41,9 +41,7 @@ public class BookController {
 
     @GetMapping
     public String getAllBooks(Model model, @RequestParam Map<String, Object> params) {
-        int page = paramReader.readPage(params);
-        String direction = paramReader.readDirection(params);
-        Pageable pageable = PageRequest.of(page, 10, Sort.Direction.valueOf(direction), "title");
+        Pageable pageable = paramReader.getPageable(params);
         List<BookDto> bookDtos = bookService.getAllBooks(pageable);
         model.addAttribute("books", bookDtos);
         return "book/books";

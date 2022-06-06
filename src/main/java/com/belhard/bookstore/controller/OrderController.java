@@ -43,9 +43,7 @@ public class OrderController {
 
     @GetMapping
     public String getAllOrders(Model model, @RequestParam Map<String, Object> params) {
-        int page = paramReader.readPage(params);
-        String direction = paramReader.readDirection(params);
-        Pageable pageable = PageRequest.of(page, 10, Sort.Direction.valueOf(direction), "id");
+        Pageable pageable = paramReader.getPageable(params);
         List<OrderDto> orders = orderService.getAllOrders(pageable);
         model.addAttribute("orders", orders);
         return "order/orders";

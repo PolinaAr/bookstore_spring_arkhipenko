@@ -39,9 +39,7 @@ public class UserController {
 
     @GetMapping
     public String getAllUsers(Model model, @RequestParam Map<String, Object> params) {
-        int page = paramReader.readPage(params);
-        String direction = paramReader.readDirection(params);
-        Pageable pageable = PageRequest.of(page, 10, Sort.Direction.valueOf(direction), "id");
+        Pageable pageable = paramReader.getPageable(params);
         List<UserDto> userDtos = userService.getAllUsers(pageable);
         model.addAttribute("users", userDtos);
         return "user/users";
