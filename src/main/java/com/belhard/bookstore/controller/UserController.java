@@ -3,7 +3,11 @@ package com.belhard.bookstore.controller;
 import com.belhard.bookstore.exceptions.UserException;
 import com.belhard.bookstore.service.UserService;
 import com.belhard.bookstore.service.dto.UserDto;
+import com.belhard.bookstore.util.ParamReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -17,16 +21,26 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
+    private UserService userService;
+    private ParamReader paramReader;
+
+    public UserController() {
+    }
 
     @Autowired
-    public UserController(UserService userService) {
+    public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
+    @Autowired
+    public void setParamReader(ParamReader paramReader) {
+        this.paramReader = paramReader;
+    }
+
     @GetMapping
-    public String getAllUsers(Model model) {
-        List<UserDto> userDtos = userService.getAllUsers();
+    public String getAllUsers(Model model, @RequestParam Map<String, Object> params) {
+        Pageable pageable = paramReader.getPageable(params);
+        List<UserDto> userDtos = userService.getAllUsers(pageable);
         model.addAttribute("users", userDtos);
         return "user/users";
     }
@@ -53,7 +67,7 @@ public class UserController {
     public String createUser(Model model, @RequestParam Map<String, Object> params) {
         try {
             UserDto userDto = setUserDto(params);
-            UserDto created = userService.createUser(userDto);
+            UserDto created = userService.saveUser(userDto);
             model.addAttribute("user", created);
             return "user/getUser";
         } catch (UserException e) {
@@ -86,7 +100,7 @@ public class UserController {
         try {
             UserDto userDto = setUserDto(params);
             userDto.setId(id);
-            UserDto updated = userService.updateUser(userDto);
+            UserDto updated = userService.saveUser((userDto));
             model.addAttribute("user", updated);
             return "user/getUser";
         } catch (UserException e) {

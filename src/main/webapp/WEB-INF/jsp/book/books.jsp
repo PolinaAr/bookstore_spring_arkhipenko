@@ -15,6 +15,31 @@
     <form action="/books/create">
         <button>Add book</button>
     </form>
+    <form action="/books" method="get">
+        <label for="sort-input">Sort: </label>
+        <select id="sort-input" name="direction" required="required">
+            <option value="ASC">Choose value</option>
+            <option value="ASC">Ascending</option>
+            <option value="DESC">Descending</option>
+        </select>
+        <label for="sortBy-input">Sort by: </label>
+        <select id="sortBy-input" name="sortColumn" required="required">
+            <option value="id">Choose value</option>
+            <option value="id">id</option>
+            <option value="isbn">isbn</option>
+            <option value="title">title</option>
+            <option value="author">author</option>
+        </select>
+        <label for="show-input">Show on page by: </label>
+        <select id="show-input" name="items" required="required">
+            <option value="10">Choose value</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+        </select>
+        <input type="submit" value="Sort"/>
+    </form>
         <table>
             <tr>
                 <th>ID</th>

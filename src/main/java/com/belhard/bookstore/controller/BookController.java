@@ -1,23 +1,30 @@
 package com.belhard.bookstore.controller;
 
 import com.belhard.bookstore.exceptions.BookException;
-import com.belhard.bookstore.service.dto.BookDto;
 import com.belhard.bookstore.service.BookService;
+import com.belhard.bookstore.service.dto.BookDto;
+import com.belhard.bookstore.util.ParamReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @RequestMapping("/books")
 public class BookController {
 
     private BookService bookService;
+    private ParamReader paramReader;
 
     public BookController() {
     }
@@ -27,9 +34,15 @@ public class BookController {
         this.bookService = bookService;
     }
 
+    @Autowired
+    public void setParamReader(ParamReader paramReader) {
+        this.paramReader = paramReader;
+    }
+
     @GetMapping
-    public String getAllBooks(Model model) {
-        List<BookDto> bookDtos = bookService.getAllBooks();
+    public String getAllBooks(Model model, @RequestParam Map<String, Object> params) {
+        Pageable pageable = paramReader.getPageable(params);
+        List<BookDto> bookDtos = bookService.getAllBooks(pageable);
         model.addAttribute("books", bookDtos);
         return "book/books";
     }
@@ -53,9 +66,9 @@ public class BookController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String createBook (Model model, @RequestParam Map<String, Object> params) {
+    public String createBook(Model model, @RequestParam Map<String, Object> params) {
         try {
-            BookDto created = bookService.createBook(setBookDto(params));
+            BookDto created = bookService.saveBook(setBookDto(params));
             model.addAttribute("book", created);
             return "book/getBook";
         } catch (BookException e) {
@@ -76,21 +89,21 @@ public class BookController {
     }
 
     @GetMapping("/edit/{id}")
-    public String updateForm(Model model, @PathVariable Long id){
+    public String updateForm(Model model, @PathVariable Long id) {
         BookDto bookDto = bookService.getBookById(id);
         model.addAttribute("book", bookDto);
         return "book/updateBook";
     }
 
     @PostMapping("/{id}")
-    public String updateBook (Model model, @RequestParam Map<String, Object> params, @PathVariable Long id){
+    public String updateBook(Model model, @RequestParam Map<String, Object> params, @PathVariable Long id) {
         try {
             BookDto bookDto = setBookDto(params);
             bookDto.setId(id);
-            BookDto updated = bookService.updateBook(bookDto);
+            BookDto updated = bookService.saveBook(bookDto);
             model.addAttribute("book", updated);
             return "book/getBook";
-        } catch (BookException e){
+        } catch (BookException e) {
             model.addAttribute("message", "The book is not updated");
             return "error";
         }
