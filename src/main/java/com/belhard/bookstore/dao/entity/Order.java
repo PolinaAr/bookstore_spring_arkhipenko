@@ -33,7 +33,7 @@ public class Order {
     private Status status;
 
     public enum Status {
-        OTHER, CANCELED, COMPLETED, AWAITING_PAYMENT, IN_WAY, PROCESSING
+        CANCELED, COMPLETED, AWAITING_PAYMENT, IN_WAY, PROCESSING
     }
 
     public Long getId() {

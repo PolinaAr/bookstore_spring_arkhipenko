@@ -14,7 +14,7 @@ public class BookDto {
     private BigDecimal price;
 
     public enum Cover {
-        OTHER, SOFT, HARD, GIFT
+        SOFT, HARD, GIFT
     }
 
     public BookDto() {
