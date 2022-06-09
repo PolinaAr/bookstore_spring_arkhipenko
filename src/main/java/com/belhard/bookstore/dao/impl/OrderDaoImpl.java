@@ -25,14 +25,19 @@ public class OrderDaoImpl implements OrderDao {
     private EntityManager manager;
 
     @Override
-    public List<Order> getAllOrders() {
-        List<Order> orders = manager.createQuery("from Order", Order.class).getResultList();
+    public List<Order> findAll(int page, int items, String sortColumn, String direction) {
+        List<Order> orders = manager.createQuery("from Order order by ?1 ?2", Order.class)
+                .setFirstResult(page)
+                .setMaxResults(items)
+                .setParameter(1, sortColumn)
+                .setParameter(2, direction)
+                .getResultList();
         manager.clear();
         return orders;
     }
 
     @Override
-    public Order getOrderById(Long id) {
+    public Order find(Long id) {
         try {
             Order order = manager.find(Order.class, id);
             manager.clear();
@@ -44,7 +49,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Order createOrder(Order order) {
+    public Order create(Order order) {
         try {
             manager.persist(order);
             manager.clear();
@@ -56,7 +61,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Order updateOrder(Order order) {
+    public Order update(Order order) {
         try {
             manager.merge(order);
             manager.clear();
@@ -68,7 +73,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public boolean deleteOrder(Long id) {
+    public boolean delete(Long id) {
         try {
             Order order = manager.find(Order.class, id);
             order.setStatus(Order.Status.CANCELED);

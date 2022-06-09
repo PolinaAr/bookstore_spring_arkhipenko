@@ -67,8 +67,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> getAllOrders() {
-        List<Order> orders = orderDao.getAllOrders();
+    public List<OrderDto> getAllOrders(int page, int items, String sortColumn, String direction) {
+        List<Order> orders = orderDao.findAll(page, items, sortColumn, direction);
         List<OrderDto> dtos = new ArrayList<>();
         for (Order order : orders) {
             OrderDto orderDto = toDto(order);
@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto getById(Long id) {
-        Order order = orderDao.getOrderById(id);
+        Order order = orderDao.find(id);
         if (order == null) {
             logger.error("The order was not created");
             throw new OrderException("The order was not created");
@@ -112,7 +112,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto createOrder(OrderDto orderDto) {
         Order toCreate = toEntity(orderDto);
-        Order created = orderDao.createOrder(toCreate);
+        Order created = orderDao.create(toCreate);
         if (created == null) {
             logger.error("The order was not created");
             throw new OrderException("The order was not created");
@@ -128,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
     private void createOrderItem(List<OrderItemDto> items, OrderDto orderDto) {
         for (OrderItemDto itemDto : items) {
             itemDto.setOrderId(orderDto.getId());
-            OrderItem createdOrderItem = orderItemDao.createOrderItem(itemToEntity(itemDto));
+            OrderItem createdOrderItem = orderItemDao.create(itemToEntity(itemDto));
             if (createdOrderItem == null) {
                 logger.error("The order item was not created");
                 throw new OrderException("The order item was not created");
@@ -140,13 +140,13 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto updateOrder(OrderDto orderDto) {
         Order entity = toEntity(orderDto);
-        Order updatedOrder = orderDao.updateOrder(entity);
+        Order updatedOrder = orderDao.update(entity);
         if (updatedOrder == null) {
             throw new OrderException("The order was not updated");
         }
 
         List<OrderItem> items = orderItemDao.getByOrderId(orderDto.getId());
-        items.forEach(i -> orderItemDao.deleteOrderItem(i.getId()));
+        items.forEach(i -> orderItemDao.delete(i.getId()));
 
         createOrderItem(orderDto.getItems(), orderDto);
         return getById(orderDto.getId());
@@ -154,17 +154,17 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderItem itemToEntity(OrderItemDto itemDto) {
         OrderItem orderItem = new OrderItem();
-        orderItem.setOrder(orderDao.getOrderById(itemDto.getOrderId()));
+        orderItem.setOrder(orderDao.find(itemDto.getOrderId()));
         orderItem.setPrice(itemDto.getPrice());
         orderItem.setQuantity(itemDto.getQuantity());
-        orderItem.setBook(bookDao.getBookById(itemDto.getBookDto().getId()));
+        orderItem.setBook(bookDao.find(itemDto.getBookDto().getId()));
         return orderItem;
     }
 
     private Order toEntity(OrderDto orderDto) {
         Order entity = new Order();
         entity.setId(orderDto.getId());
-        entity.setUser(userDao.getUserById(orderDto.getUserDto().getId()));
+        entity.setUser(userDao.find(orderDto.getUserDto().getId()));
         BigDecimal totalCost = calculateTotalCost(orderDto);
         entity.setTotalCost(totalCost);
         entity.setStatus(Order.Status.valueOf(orderDto.getStatus().toString().toUpperCase()));
@@ -184,7 +184,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(Long id) {
-        if (!orderDao.deleteOrder(id)) {
+        if (!orderDao.delete(id)) {
             throw new OrderException("The book was not deleted.");
         }
         ;

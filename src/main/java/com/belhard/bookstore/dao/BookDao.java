@@ -4,21 +4,11 @@ import com.belhard.bookstore.dao.entity.Book;
 
 import java.util.List;
 
-public interface BookDao {
-
-    List<Book> getAllBooks();
-
-    Book getBookById(Long id);
+public interface BookDao extends AbstractDao<Book, Long> {
 
     Book getBookByIsbn(String isbn);
 
     List<Book> getBookByAuthor(String author);
-
-    Book createBook(Book book);
-
-    Book updateBook(Book book);
-
-    boolean deleteBook(Long id);
 
     Long countAllBooks();
 }

@@ -18,11 +18,11 @@
     </form>
     <table>
         <tr>
-            <td>ID</td>
-            <td>Name</td>
-            <td>Last Name</td>
-            <td>Role</td>
-            <td>Birthday</td>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Last Name</th>
+            <th>Role</th>
+            <th>Birthday</th>
         </tr>
         <c:forEach items="${users}" var="user">
             <tr>

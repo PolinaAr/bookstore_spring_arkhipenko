@@ -15,22 +15,22 @@
     <form action="/books/create">
         <button>Add book</button>
     </form>
-        <table>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>ISBN</th>
+            <th>Title</th>
+            <th>Author</th>
+        </tr>
+        <c:forEach items="${books}" var="book">
             <tr>
-                <th>ID</th>
-                <th>ISBN</th>
-                <th>Title</th>
-                <th>Author</th>
+                <td> ${book.id} </td>
+                <td> ${book.isbn} </td>
+                <td><a href="/books/${book.id}"> ${book.title} </a></td>
+                <td> ${book.author} </td>
             </tr>
-            <c:forEach items="${books}" var="book">
-                <tr>
-                    <td> ${book.id} </td>
-                    <td> ${book.isbn} </td>
-                    <td><a href="/books/${book.id}"> ${book.title} </a></td>
-                    <td> ${book.author} </td>
-                </tr>
-            </c:forEach>
-        </table>
+        </c:forEach>
+    </table>
 </div>
 </body>
 </html>

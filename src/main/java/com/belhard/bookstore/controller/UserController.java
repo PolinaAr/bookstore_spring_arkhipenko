@@ -3,6 +3,7 @@ package com.belhard.bookstore.controller;
 import com.belhard.bookstore.exceptions.UserException;
 import com.belhard.bookstore.service.UserService;
 import com.belhard.bookstore.service.dto.UserDto;
+import com.belhard.bookstore.util.ReaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -17,16 +18,29 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
+    private UserService userService;
+    private ReaderUtil readerUtil;
+
+    public UserController() {
+    }
 
     @Autowired
-    public UserController(UserService userService) {
+    public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
+    @Autowired
+    public void setReaderUtil(ReaderUtil readerUtil) {
+        this.readerUtil = readerUtil;
+    }
+
     @GetMapping
-    public String getAllUsers(Model model) {
-        List<UserDto> userDtos = userService.getAllUsers();
+    public String getAllUsers(Model model, @RequestParam Map<String, Object> params) {
+        int page = readerUtil.readPage(params);
+        int items = readerUtil.readQuantityOfItems(params);
+        String sortColumn = readerUtil.readSortColumn(params);
+        String direction = readerUtil.readDirection(params);
+        List<UserDto> userDtos = userService.getAllUsers(page, items, sortColumn, direction);
         model.addAttribute("users", userDtos);
         return "user/users";
     }

@@ -5,6 +5,7 @@ import com.belhard.bookstore.dao.entity.Book;
 import com.belhard.bookstore.exceptions.BookException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Criteria;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityExistsException;
@@ -18,6 +19,7 @@ import java.util.List;
 public class BookDaoJdbcImpl implements BookDao {
 
     private static final Logger logger = LogManager.getLogger(BookDaoJdbcImpl.class);
+    public static final String FIND_ALL = "from Book where deleted=false order by ?1";
 
     public BookDaoJdbcImpl() {
     }
@@ -27,15 +29,20 @@ public class BookDaoJdbcImpl implements BookDao {
 
     @Override
     @Transactional
-    public List<Book> getAllBooks() {
-        List<Book> books = manager.createQuery("from Book where deleted=false", Book.class).getResultList();
+    public List<Book> findAll(int page, int items, String sortColumn, String direction) {
+        List<Book> books = manager.createQuery(FIND_ALL, Book.class)
+                .setParameter(1, sortColumn)
+                .setParameter(2, direction)
+                .setFirstResult(page)
+                .setMaxResults(items)
+                .getResultList();
         manager.clear();
         return books;
     }
 
     @Override
     @Transactional
-    public Book getBookById(Long id) {
+    public Book find(Long id) {
         try {
             Book book = manager.find(Book.class, id);
             manager.clear();
@@ -71,7 +78,7 @@ public class BookDaoJdbcImpl implements BookDao {
 
     @Override
     @Transactional
-    public Book createBook(Book book) {
+    public Book create(Book book) {
         try {
             manager.persist(book);
             manager.clear();
@@ -84,7 +91,7 @@ public class BookDaoJdbcImpl implements BookDao {
 
     @Override
     @Transactional
-    public Book updateBook(Book book) {
+    public Book update(Book book) {
         try {
             manager.merge(book);
             return book;
@@ -96,7 +103,7 @@ public class BookDaoJdbcImpl implements BookDao {
 
     @Override
     @Transactional
-    public boolean deleteBook(Long id) {
+    public boolean delete(Long id) {
         try {
             Book book = manager.find(Book.class, id);
             book.setDeleted(true);

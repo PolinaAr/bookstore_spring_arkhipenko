@@ -25,14 +25,19 @@ public class OrderItemDaoImpl implements OrderItemDao {
     private EntityManager manager;
 
     @Override
-    public List<OrderItem> getAllOrderItem() {
-        List<OrderItem> items = manager.createQuery("from OrderItem", OrderItem.class).getResultList();
+    public List<OrderItem> findAll(int page, int item, String sortColumn, String direction) {
+        List<OrderItem> items = manager.createQuery("from OrderItem order by ?1 ?2", OrderItem.class)
+                .setFirstResult(page)
+                .setMaxResults(item)
+                .setParameter(1, sortColumn)
+                .setParameter(2, direction)
+                .getResultList();
         manager.clear();
         return items;
     }
 
     @Override
-    public OrderItem getById(Long id) {
+    public OrderItem find(Long id) {
         try {
             OrderItem item = manager.find(OrderItem.class, id);
             manager.clear();
@@ -53,7 +58,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
     }
 
     @Override
-    public OrderItem createOrderItem(OrderItem orderItem) {
+    public OrderItem create(OrderItem orderItem) {
         try {
             manager.persist(orderItem);
             manager.clear();
@@ -65,7 +70,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
     }
 
     @Override
-    public OrderItem updateOrderItem(OrderItem orderItem) {
+    public OrderItem update(OrderItem orderItem) {
         try {
             manager.merge(orderItem);
             manager.clear();
@@ -77,7 +82,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
     }
 
     @Override
-    public boolean deleteOrderItem(Long id) {
+    public boolean delete(Long id) {
         try {
             manager.remove(getByOrderId(id));
             manager.clear();

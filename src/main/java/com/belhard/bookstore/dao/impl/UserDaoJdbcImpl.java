@@ -27,14 +27,19 @@ public class UserDaoJdbcImpl implements UserDao {
     private EntityManager manager;
 
     @Override
-    public List<User> getAllUsers() {
-        List<User> users = manager.createQuery("from User where deleted = false", User.class).getResultList();
+    public List<User> findAll(int page, int items, String sortColumn, String direction) {
+        List<User> users = manager.createQuery("from User where deleted = false order by ?1 ?2", User.class)
+                .setFirstResult(page)
+                .setMaxResults(items)
+                .setParameter(1, sortColumn)
+                .setParameter(2, direction)
+                .getResultList();
         manager.clear();
         return users;
     }
 
     @Override
-    public User getUserById(Long id) {
+    public User find(Long id) {
         try {
             User user = manager.find(User.class, id);
             manager.clear();
@@ -68,7 +73,7 @@ public class UserDaoJdbcImpl implements UserDao {
 
     @Override
     @Transactional
-    public User createUser(User user) {
+    public User create(User user) {
         try {
             manager.persist(user);
             manager.clear();
@@ -81,7 +86,7 @@ public class UserDaoJdbcImpl implements UserDao {
 
     @Override
     @Transactional
-    public User updateUser(User user) {
+    public User update(User user) {
         try {
             manager.merge(user);
             return user;
@@ -93,7 +98,7 @@ public class UserDaoJdbcImpl implements UserDao {
 
     @Override
     @Transactional
-    public boolean deleteUser(Long id) {
+    public boolean delete(Long id) {
         try {
             User user = manager.find(User.class, id);
             user.setDeleted(true);

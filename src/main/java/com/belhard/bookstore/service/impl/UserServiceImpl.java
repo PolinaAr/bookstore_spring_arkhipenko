@@ -25,10 +25,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<UserDto> getAllUsers(int page, int items, String sortColumn, String direction) {
         logger.debug("Call method getAllUsers");
         List<UserDto> userDtos = new ArrayList<>();
-        List<User> users = userDao.getAllUsers();
+        List<User> users = userDao.findAll(page, items, sortColumn, direction);
         for (User user : users) {
             userDtos.add(toDto(user));
         }
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long id) {
         logger.debug("Call method getUserById");
-        User user = userDao.getUserById(id);
+        User user = userDao.find(id);
         if (user == null) {
             throw new UserException("There is no user with id = " + id);
         }
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
         logger.debug("Call method createUser");
         User userToCreate = toUser(userDto);
-        User createdUser = userDao.createUser(userToCreate);
+        User createdUser = userDao.create(userToCreate);
         if (createdUser == null) {
             throw new UserException("The user is not created");
         }
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
         if (existing != null && !existing.getEmail().equals(userDto.getEmail())) {
             throw new UserException("You can't update this user. User with email " + userDto.getEmail() + " is already exist");
         }
-        User updatedUser = userDao.updateUser(userToUpdate);
+        User updatedUser = userDao.update(userToUpdate);
         if (updatedUser == null) {
             throw new UserException("The user is not updated.");
         }
@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         logger.debug("Call method deleteUser");
-        if (!userDao.deleteUser(id)) {
+        if (!userDao.delete(id)) {
             throw new UserException("The user is not deleted");
         }
     }

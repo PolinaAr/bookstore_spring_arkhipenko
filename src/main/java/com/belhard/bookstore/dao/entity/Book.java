@@ -36,7 +36,7 @@ public class Book {
     private Cover cover;
 
     public enum Cover {
-        OTHER, SOFT, HARD, GIFT
+        SOFT, HARD, GIFT
     }
 
     public Book() {

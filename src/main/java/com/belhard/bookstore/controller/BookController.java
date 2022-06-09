@@ -3,6 +3,7 @@ package com.belhard.bookstore.controller;
 import com.belhard.bookstore.exceptions.BookException;
 import com.belhard.bookstore.service.dto.BookDto;
 import com.belhard.bookstore.service.BookService;
+import com.belhard.bookstore.util.ReaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class BookController {
 
     private BookService bookService;
+    private ReaderUtil readerUtil;
 
     public BookController() {
     }
@@ -27,9 +29,18 @@ public class BookController {
         this.bookService = bookService;
     }
 
+    @Autowired
+    public void setReaderUtil(ReaderUtil readerUtil) {
+        this.readerUtil = readerUtil;
+    }
+
     @GetMapping
-    public String getAllBooks(Model model) {
-        List<BookDto> bookDtos = bookService.getAllBooks();
+    public String getAllBooks(Model model, @RequestParam Map<String, Object> params) {
+        int page = readerUtil.readPage(params);
+        int items = readerUtil.readQuantityOfItems(params);
+        String sortColumn = readerUtil.readSortColumn(params);
+        String direction = readerUtil.readDirection(params);
+        List<BookDto> bookDtos = bookService.getAllBooks(page, items, sortColumn, direction);
         model.addAttribute("books", bookDtos);
         return "book/books";
     }
