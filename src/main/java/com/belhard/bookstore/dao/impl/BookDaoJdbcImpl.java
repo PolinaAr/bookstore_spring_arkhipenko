@@ -8,10 +8,10 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -19,7 +19,7 @@ import java.util.List;
 public class BookDaoJdbcImpl implements BookDao {
 
     private static final Logger logger = LogManager.getLogger(BookDaoJdbcImpl.class);
-    public static final String FIND_ALL = "from Book where deleted=false order by ?1";
+    public static final String FIND_ALL = "from Book where deleted=false order by ?1 ?2";
 
     public BookDaoJdbcImpl() {
     }
@@ -30,14 +30,16 @@ public class BookDaoJdbcImpl implements BookDao {
     @Override
     @Transactional
     public List<Book> findAll(int page, int items, String sortColumn, String direction) {
-        List<Book> books = manager.createQuery(FIND_ALL, Book.class)
-                .setParameter(1, sortColumn)
-                .setParameter(2, direction)
-                .setFirstResult(page)
-                .setMaxResults(items)
-                .getResultList();
-        manager.clear();
-        return books;
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Book> query = builder.createQuery(Book.class);
+        Root<Book> root = query.from(Book.class);
+        if (direction.equals("ASC")) {
+            query.select(root).where(builder.equal(root.get("deleted"), false)).orderBy(builder.asc(root.get(sortColumn)));
+        } else {
+            query.select(root).where(builder.equal(root.get("deleted"), false)).orderBy(builder.desc(root.get(sortColumn)));
+        }
+        Query q = manager.createQuery(query);
+        return q.setFirstResult(page).setMaxResults(items).getResultList();
     }
 
     @Override

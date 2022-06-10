@@ -1,6 +1,7 @@
 package com.belhard.bookstore.dao.impl;
 
 import com.belhard.bookstore.dao.UserDao;
+import com.belhard.bookstore.dao.entity.Book;
 import com.belhard.bookstore.dao.entity.User;
 import com.belhard.bookstore.exceptions.UserException;
 import org.apache.logging.log4j.LogManager;
@@ -8,10 +9,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -28,14 +29,16 @@ public class UserDaoJdbcImpl implements UserDao {
 
     @Override
     public List<User> findAll(int page, int items, String sortColumn, String direction) {
-        List<User> users = manager.createQuery("from User where deleted = false order by ?1 ?2", User.class)
-                .setFirstResult(page)
-                .setMaxResults(items)
-                .setParameter(1, sortColumn)
-                .setParameter(2, direction)
-                .getResultList();
-        manager.clear();
-        return users;
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+        if (direction.equals("ASC")) {
+            query.select(root).where(builder.equal(root.get("deleted"), false)).orderBy(builder.asc(root.get(sortColumn)));
+        } else {
+            query.select(root).where(builder.equal(root.get("deleted"), false)).orderBy(builder.desc(root.get(sortColumn)));
+        }
+        Query q = manager.createQuery(query);
+        return q.setFirstResult(page).setMaxResults(items).getResultList();
     }
 
     @Override

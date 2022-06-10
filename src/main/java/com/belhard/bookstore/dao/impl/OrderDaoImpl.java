@@ -1,16 +1,19 @@
 package com.belhard.bookstore.dao.impl;
 
 import com.belhard.bookstore.dao.OrderDao;
+import com.belhard.bookstore.dao.entity.Book;
 import com.belhard.bookstore.dao.entity.Order;
+import com.belhard.bookstore.dao.entity.User;
 import com.belhard.bookstore.exceptions.OrderException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
@@ -26,14 +29,16 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<Order> findAll(int page, int items, String sortColumn, String direction) {
-        List<Order> orders = manager.createQuery("from Order order by ?1 ?2", Order.class)
-                .setFirstResult(page)
-                .setMaxResults(items)
-                .setParameter(1, sortColumn)
-                .setParameter(2, direction)
-                .getResultList();
-        manager.clear();
-        return orders;
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Order> query = builder.createQuery(Order.class);
+        Root<Order> root = query.from(Order.class);
+        if (direction.equals("ASC")) {
+            query.select(root).orderBy(builder.asc(root.get(sortColumn)));
+        } else {
+            query.select(root).orderBy(builder.desc(root.get(sortColumn)));
+        }
+        Query q = manager.createQuery(query);
+        return q.setFirstResult(page).setMaxResults(items).getResultList();
     }
 
     @Override

@@ -17,8 +17,8 @@ public class ReaderUtil {
 
     public String readDirection(Map<String, Object> params) {
         String direction = "ASC";
-        if (params.containsKey("direction")) {
-            direction = params.get("direction").toString();
+        if (params.containsKey("direction") && params.get("direction").equals("DESC")) {
+            direction = "DESC";
         }
         return direction;
     }
@@ -26,7 +26,7 @@ public class ReaderUtil {
     public String readSortColumn(Map<String, Object> params) {
         String sortColumn = "id";
         if (params.containsKey("sortColumn")) {
-            sortColumn = params.get("sortColumn").toString().toLowerCase();
+            sortColumn = params.get("sortColumn").toString();
         }
         return sortColumn;
     }
