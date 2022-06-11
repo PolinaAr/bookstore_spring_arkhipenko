@@ -6,6 +6,7 @@ import com.belhard.bookstore.dao.repository.UserRepository;
 import com.belhard.bookstore.exceptions.UserException;
 import com.belhard.bookstore.service.UserService;
 import com.belhard.bookstore.service.dto.UserDto;
+import com.belhard.bookstore.util.EncryptorUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.hql.internal.QueryExecutionRequestException;
@@ -104,7 +105,7 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new UserException("Illegal input of email.");
         }
-        user.setPassword(userDto.getPassword());
+        user.setPassword(EncryptorUtil.encrypt(userDto.getPassword()));
         user.setBirthday(userDto.getBirthday());
         return user;
     }
@@ -126,7 +127,8 @@ public class UserServiceImpl implements UserService {
         if (userDto == null) {
             return false;
         }
-        return userDto.getPassword().equals(password);
+        String passwordHash =EncryptorUtil.encrypt(password);
+        return userDto.getPassword().equals(passwordHash);
 
     }
 

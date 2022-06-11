@@ -122,6 +122,12 @@ public class UserController {
         }
     }
 
+    @PostMapping("/login")
+    public String login(@RequestParam String login, @RequestParam String password){
+        
+        return "user/login";
+    }
+
 }
 
 

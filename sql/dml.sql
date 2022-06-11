@@ -2,7 +2,7 @@
 TRUNCATE books CASCADE;
 TRUNCATE users CASCADE;
 TRUNCATE orders CASCADE;
-TRUNCATE orderItem CASCADE;
+TRUNCATE orderItems CASCADE;
 */
 INSERT INTO books (isbn, title, author, pages, cover_id, price)
 VALUES ('978-5-17-072346-1', 'Master and Margarita', 'Michael Bulgakov', 415, 0, 34.68),
@@ -27,26 +27,26 @@ VALUES ('978-5-17-072346-1', 'Master and Margarita', 'Michael Bulgakov', 415, 0,
        ('978-5-00-131235-2', 'Anxious people', 'Fredrik Backman', 416, 0, 27.49);
 
 INSERT INTO users (name, lastname, role_id, email, password, birthday)
-VALUES ('Christopher', 'King', 0, 'chris025@gmail.com', 'P4Eo2j1j', '1987-11-5'),
-       ('Terry', 'Jenkins', 0, 'jenkBest@mail.ru', '9TGd2h5w', '1997-08-25'),
-       ('Lauren', 'Thornton', 1, 'lauren@tut.by', '24JZB2kn','1985-07-03'),
-       ('Miguel', 'Potter', 1, 'potter@gmail.com', '9JBRO0Jn', '2000-09-07'),
-       ('Lewis', 'Caldwell', 1, 'lewis86@yandex.ru', 'Jqc1brQm', '1986-12-08'),
-       ('William', 'Jones', 1, 'willjo@gmail.com', 'FVoIVVsf', '1978-03-18'),
-       ('Steve', 'Torres', 2, 'badboy1@mail.ru', '7PEcabFV', '2008-07-06'),
-       ('Sandra', 'Jackson', 2, 'sanjack@gmail.com', 'rDmx0cO4', '2002-12-01'),
-       ('Jason', 'Lee', 2, 'lee123@gmail.com', 'YRfVoaxm', '1999-10-03'),
-       ('Richard', 'Matthews', 2, 'richchi@tut.by', 'wiEdhdil', '2004-09-15'),
-       ('Stanley', 'Peterson', 2, 'stan45@gmail.com', 'hPN32jRR', '1991-02-27'),
-       ('Richard', 'Barnes', 2, 'bar007@tut.by', '20N4bIde', '2003-06-30'),
-       ('Sally', 'Ramirez', 2, 'sally01@mail.ru', 'EEpqz8Cb', '1999-04-18'),
-       ('Robin', 'Spencer', 2, 'nice_girl@gmail.com', '4jdfUqUh', '2007-09-13'),
-       ('Annie', 'Clark', 2, 'ann5@tut.by', 'fXOq9LFR', '2002-06-26'),
-       ('Donna', 'Williams', 2, 'donn@gmail.com', 'zXLYsVQa', '1996-10-04'),
-       ('Diane', 'Jones', 2, 'jondi@mail.ru', 'DX5fK4AC', '1978-07-10'),
-       ('Naomi', 'Jones', 2, 'naomi87@gmail.com', 'N8iiyREa', '1987-08-14'),
-       ('Margie', 'Keller', 2, 'margo7@tut.by', 'GjTKv51o', '1998-10-05'),
-       ('Ida', 'Park', 2, 'park71', 'tyliFqgO', '1971-09-20');
+VALUES ('Christopher', 'King', 0, 'chris025@gmail.com', '5e8f24540956c0cf364786bc52f64b72029b297d', '1987-11-5'),
+       ('Terry', 'Jenkins', 0, 'jenkBest@mail.ru', '5a58e385169778868a3b257c76c24007b0941619', '1997-08-25'),
+       ('Lauren', 'Thornton', 1, 'lauren@tut.by', 'cb852d950c935d46b5c884b6d2a31e90ccad280d','1985-07-03'),
+       ('Miguel', 'Potter', 1, 'potter@gmail.com', '42b0c8e2906364723119b9d41d06380263fd4e8a', '2000-09-07'),
+       ('Lewis', 'Caldwell', 1, 'lewis86@yandex.ru', '3cff26823ad997a59583fa9fb4aafefdaf877540', '1986-12-08'),
+       ('William', 'Jones', 1, 'willjo@gmail.com', '5a2089877cfac6ed19ff3744c83a04cada045493', '1978-03-18'),
+       ('Steve', 'Torres', 2, 'badboy1@mail.ru', '98467cc0ace084171fc22398fe9cec348f7bdb81', '2008-07-06'),
+       ('Sandra', 'Jackson', 2, 'sanjack@gmail.com', 'bb131b99392447969fa17109f7f4537bcde6fe06', '2002-12-01'),
+       ('Jason', 'Lee', 2, 'lee123@gmail.com', 'd01961fc938c05a14a4508ee9717acf2665687cb', '1999-10-03'),
+       ('Richard', 'Matthews', 2, 'richchi@tut.by', 'dd97131240b22d9b5f0144eb90ef195f4779f3b', '2004-09-15'),
+       ('Stanley', 'Peterson', 2, 'stan45@gmail.com', 'cd67f7f169a5ed4d3210bfd3939158b456b2ac9c', '1991-02-27'),
+       ('Richard', 'Barnes', 2, 'bar007@tut.by', 'b9571a7cacc11e1b712bd7e4e5de6afc7b0551d5', '2003-06-30'),
+       ('Sally', 'Ramirez', 2, 'sally01@mail.ru', '1a12a1dfa9a8ef7bd1b7b07455e93f877b3142e7', '1999-04-18'),
+       ('Robin', 'Spencer', 2, 'nice_girl@gmail.com', '5e10a15ef3fd9cd5bfa4711f3532676f3f1bf42b', '2007-09-13'),
+       ('Annie', 'Clark', 2, 'ann5@tut.by', 'f6b45878cef90ddf6c72162df47803102f832ba2', '2002-06-26'),
+       ('Donna', 'Williams', 2, 'donn@gmail.com', '5a31cdde3811ca507eb84750ec766330e2f077f8', '1996-10-04'),
+       ('Diane', 'Jones', 2, 'jondi@mail.ru', 'c935ea8a85b409996a7e3384cd0f4f563fb5117e', '1978-07-10'),
+       ('Naomi', 'Jones', 2, 'naomi87@gmail.com', 'a55cedcea40fccb44ad2a1b7147874011086d885', '1987-08-14'),
+       ('Margie', 'Keller', 2, 'margo7@tut.by', 'f14d5fa72459fd01fbb119f1819eddb37836d3bf', '1998-10-05'),
+       ('Ida', 'Park', 2, 'park71@sdf.sd', '2546979bd1bd1e71706c59a99f49b20d92f50bf1', '1971-09-20');
 
 INSERT INTO orders (user_id, total_cost, status_id)
 VALUES ((SELECT id FROM users WHERE email = 'lauren@tut.by'), 176.6 , 2),
