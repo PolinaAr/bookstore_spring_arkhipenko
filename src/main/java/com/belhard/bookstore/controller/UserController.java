@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.Session;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -122,10 +123,19 @@ public class UserController {
         }
     }
 
-    @PostMapping("/login")
-    public String login(@RequestParam String login, @RequestParam String password){
-        
+    @GetMapping("/login")
+    public String loginForm(){
         return "user/login";
+    }
+
+    @PostMapping("/login")
+    public String login(Model model, @RequestParam String email, @RequestParam String password){
+        if (userService.validateUser(email, password)){
+            return "index";
+        } else {
+            model.addAttribute("message", "The user is not logged in");
+            return "error";
+        }
     }
 
 }

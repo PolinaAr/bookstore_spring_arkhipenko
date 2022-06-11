@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
         if (userDto == null) {
             return false;
         }
-        String passwordHash =EncryptorUtil.encrypt(password);
+        String passwordHash = EncryptorUtil.encrypt(password);
         return userDto.getPassword().equals(passwordHash);
 
     }
