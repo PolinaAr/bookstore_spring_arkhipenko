@@ -9,7 +9,14 @@
     <img src="../pictures/logo.png" alt="Polina bookstore"/>
     <h1>Polina bookstore</h1>
 </div>
-<div class="mainPart">Please, choose a section</div>
+<div class="mainPart">Please, choose a section
+    <form action="/users/create">
+        <button>Register</button>
+    </form>
+    <form action="/users/login">
+        <button>Login</button>
+    </form>
+</div>
 <div class="blocks">
     <div class="chapter">
         <p class="name">Books</p>

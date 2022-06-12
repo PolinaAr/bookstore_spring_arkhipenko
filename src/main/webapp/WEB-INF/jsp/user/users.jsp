@@ -51,9 +51,9 @@
         </tr>
         <c:forEach items="${users}" var="user">
             <tr>
-                <td>${user.id} </td>
-                <td><a href="/users/${user.id}">${user.name}</a></td>
-                <td>${user.lastName}</td>
+                <td>${user.id}</td>
+                <td><a href="/users/${user.id}"><c:out value="${user.name}"/></a></td>
+                <td><c:out value="${user.lastName}"/></td>
                 <td>${user.role.toString().toLowerCase()}</td>
                 <td>${user.birthday}</td>
             </tr>

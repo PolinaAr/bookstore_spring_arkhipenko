@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="en">
 <head>
@@ -12,11 +13,10 @@
     </div>
     <div class="mainPart">
         <h2>with id = ${user.id}</h2>
-        <p>Name = ${user.name} </p>
-        <p>Last name = ${user.lastName} </p>
+        <p>Name = <c:out value="${user.name}"/> </p>
+        <p>Last name = <c:out value="${user.lastName}"/> </p>
         <p>Role = ${user.role.toString().toLowerCase()}</p>
         <p>Email = ${user.email} </p>
-        <p>Password = ${user.password} </p>
         <p>Birthday = ${user.birthday} </p>
         <form action="/users/edit/${user.id}" method="get">
             <button>Edit user</button>

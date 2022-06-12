@@ -23,7 +23,7 @@
             <option>Soft</option>
             <option>Gift</option>
         </select> <br/>
-        <label for="price-input">Price: </label><input id="price-input" name="price" type="number" required/><br/>
+        <label for="price-input">Price: </label><input id="price-input" name="price" required/><br/>
         <input type="submit" value="Create"/>
     </form>
 </div>

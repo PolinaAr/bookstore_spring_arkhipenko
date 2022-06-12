@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="en">
 <head>
@@ -13,8 +14,8 @@
 <div class="mainPart">
     <h2>with id = ${book.id}</h2>
     <p>ISBN = ${book.isbn}</p>
-    <p>Title = ${book.title}</p>
-    <p>Author = ${book.author}</p>
+    <p>Title = <c:out value="${book.title}"/></p>
+    <p>Author = <c:out value="${book.author}"/></p>
     <p>Pages = ${book.pages}</p>
     <p>Cover = ${book.cover.toString().toLowerCase()}</p>
     <p>Price = ${book.price}</p>
