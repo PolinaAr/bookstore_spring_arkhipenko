@@ -139,6 +139,14 @@ public class UserController {
         }
     }
 
+    @GetMapping("/logout")
+    public String logOut(HttpSession session) {
+        if (session.getAttribute("user") != null) {
+            session.removeAttribute("user");
+        }
+        return "index";
+    }
+
 }
 
 

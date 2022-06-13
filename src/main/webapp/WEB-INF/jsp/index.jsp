@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,16 +7,22 @@
 </head>
 <body>
 <div class="topPanel">
-    <img src="../pictures/logo.png" alt="Polina bookstore"/>
+    <a href="http://localhost:8080"><img src="../pictures/logo.png" alt="Polina bookstore"/></a>
     <h1>Polina bookstore</h1>
 </div>
 <div class="mainPart">Please, choose a section
+    <c:if test="${sessionScope.user == null}">
     <form action="/users/create">
         <button>Register</button>
     </form>
     <form action="/users/login">
         <button>Login</button>
-    </form>
+    </form></c:if>
+    <c:if test="${sessionScope.user != null}">
+        <form action="/users/logout">
+            <button>Log out</button>
+        </form>
+    </c:if>
 </div>
 <div class="blocks">
     <div class="chapter">
