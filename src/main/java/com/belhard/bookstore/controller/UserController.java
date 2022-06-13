@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @GetMapping
-    public String getAllUsers(Model model, @RequestParam Map<String, Object> params, HttpSession session) {
+    public String getAllUsers(Model model, @RequestParam Map<String, Object> params) {
             Pageable pageable = paramReader.getPageable(params);
             List<UserDto> userDtos = userService.getAllUsers(pageable);
             model.addAttribute("users", userDtos);
@@ -63,14 +63,14 @@ public class UserController {
         return "user/createUser";
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createUser(Model model, @RequestParam Map<String, Object> params) {
+    public String createUser(Model model, @RequestParam Map<String, Object> params, HttpSession session) {
         try {
             UserDto userDto = setUserDto(params);
             UserDto created = userService.saveUser(userDto);
-            model.addAttribute("user", created);
-            return "user/getUser";
+            session.setAttribute("user", created);
+            return "index";
         } catch (UserException e) {
             model.addAttribute("message", "This user is not created.");
             return "error";

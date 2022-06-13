@@ -7,7 +7,7 @@
 <body>
 <div class="topPanel">
     <a href="http://localhost:8080"><img src="../pictures/logo.png" alt="Polina bookstore"/></a>
-    <h1>Error</h1>
+    <h1>Login</h1>
 </div >
 <div class="mainPart">
     <p>Log in</p>

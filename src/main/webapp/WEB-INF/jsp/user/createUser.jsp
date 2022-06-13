@@ -11,7 +11,7 @@
 </div>
 <div class="mainPart">
     <p>Enter values</p>
-    <form action="/users" method="post">
+    <form action="/users/create" method="post">
         <label for="name-input"> Name: </label><input id="name-input" name="name" type="text" required/><br/>
         <label for="lastname-input">Lastname: </label><input id="lastname-input" name="lastname" type="text" required/><br/>
         <label for="role-input">Role: </label>
