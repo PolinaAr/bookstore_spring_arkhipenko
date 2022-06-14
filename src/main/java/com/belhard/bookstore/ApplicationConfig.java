@@ -24,7 +24,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(usersAccessInterceptor())
                 .addPathPatterns("/users/**")
-                .excludePathPatterns("/users/create", "/users/login", "users/logout");
+                .excludePathPatterns("/users/create", "/users/login", "/users/logout");
         registry.addInterceptor(orderAccessInterceptor())
                 .addPathPatterns("/orders/**")
                 .excludePathPatterns("/orders/user/**");
