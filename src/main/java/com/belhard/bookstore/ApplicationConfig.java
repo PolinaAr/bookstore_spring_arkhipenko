@@ -26,7 +26,8 @@ public class ApplicationConfig implements WebMvcConfigurer {
                 .addPathPatterns("/users/**")
                 .excludePathPatterns("/users/create", "/users/login", "users/logout");
         registry.addInterceptor(orderAccessInterceptor())
-                .addPathPatterns("/orders/**");
+                .addPathPatterns("/orders/**")
+                .excludePathPatterns("/orders/user/**");
     }
 
 }

@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.hql.internal.QueryExecutionRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -75,8 +76,7 @@ public class OrderServiceImpl implements OrderService {
         Iterable<Order> orders = orderRepository.findAll(pageable);
         List<OrderDto> dtos = new ArrayList<>();
         for (Order order : orders) {
-            OrderDto orderDto = toDto(order);
-            dtos.add(orderDto);
+            dtos.add(toDto(order));
         }
         return dtos;
     }
@@ -86,6 +86,16 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderException("There is no order with id " + id));
         return toDto(order);
+    }
+
+    @Override
+    public List<OrderDto> getOrdersByUserId(Long id) {
+        List<Order> orders = orderRepository.findOrderByUserId(id);
+        List<OrderDto> dtos = new ArrayList<>();
+        for (Order order : orders) {
+            dtos.add(toDto(order));
+        }
+        return dtos;
     }
 
     private OrderDto toDto(Order order) {

@@ -7,8 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
+
+    List<Order> findOrderByUserId(Long id);
 
     @Transactional
     @Modifying
