@@ -6,6 +6,9 @@ import com.belhard.bookstore.dao.repository.BookRepository;
 import com.belhard.bookstore.dao.repository.OrderItemRepository;
 import com.belhard.bookstore.dao.repository.OrderRepository;
 import com.belhard.bookstore.dao.repository.UserRepository;
+import com.belhard.bookstore.exceptions.CreatingException;
+import com.belhard.bookstore.exceptions.DeleteException;
+import com.belhard.bookstore.exceptions.NullResultException;
 import com.belhard.bookstore.exceptions.OrderException;
 import com.belhard.bookstore.service.BookService;
 import com.belhard.bookstore.service.OrderService;
@@ -84,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto getById(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new OrderException("There is no order with id " + id));
+                .orElseThrow(() -> new NullResultException("There is no order with id " + id));
         return toDto(order);
     }
 
@@ -122,11 +125,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto createOrder(OrderDto orderDto) {
-        Order order = toEntity(orderDto);
-        Order created = orderRepository.save(order);
+        try {
+            Order order = toEntity(orderDto);
+            Order created = orderRepository.save(order);
 
-        saveOrderItemDto(orderDto, created);
-        return getById(created.getId());
+            saveOrderItemDto(orderDto, created);
+            return getById(created.getId());
+        } catch (RuntimeException e) {
+            throw new CreatingException("The order was not created.");
+        }
     }
 
     private void saveOrderItemDto(OrderDto orderDto, Order created) {
@@ -192,7 +199,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             orderRepository.softDelete(id);
         } catch (QueryExecutionRequestException e) {
-            throw new OrderException("The order with id " + id + " was not created");
+            throw new DeleteException("The order with id " + id + " was not deleted");
         }
     }
 

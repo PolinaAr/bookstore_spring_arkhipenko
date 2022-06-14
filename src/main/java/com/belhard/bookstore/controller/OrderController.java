@@ -44,16 +44,11 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public String getOrderById(Model model, @PathVariable Long id) {
-        try {
             OrderDto orderDto = orderService.getById(id);
             model.addAttribute("order", orderDto);
             List<OrderItemDto> items = orderDto.getItems();
             model.addAttribute("items", items);
             return "order/getOrder";
-        } catch (OrderException e) {
-            model.addAttribute("message", "This order is not found");
-            return "error";
-        }
     }
 
     @GetMapping("/user/{id}")

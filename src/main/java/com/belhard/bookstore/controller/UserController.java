@@ -1,18 +1,15 @@
 package com.belhard.bookstore.controller;
 
-import com.belhard.bookstore.exceptions.UserException;
 import com.belhard.bookstore.service.UserService;
 import com.belhard.bookstore.service.dto.UserDto;
 import com.belhard.bookstore.util.ParamReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.List;
@@ -40,22 +37,17 @@ public class UserController {
 
     @GetMapping
     public String getAllUsers(Model model, @RequestParam Map<String, Object> params) {
-            Pageable pageable = paramReader.getPageable(params);
-            List<UserDto> userDtos = userService.getAllUsers(pageable);
-            model.addAttribute("users", userDtos);
-            return "user/users";
+        Pageable pageable = paramReader.getPageable(params);
+        List<UserDto> userDtos = userService.getAllUsers(pageable);
+        model.addAttribute("users", userDtos);
+        return "user/users";
     }
 
     @GetMapping("/{id}")
     public String getById(Model model, @PathVariable Long id) {
-        try {
-            UserDto userDto = userService.getUserById(id);
-            model.addAttribute("user", userDto);
-            return "user/getUser";
-        } catch (UserException e) {
-            model.addAttribute("message", "This user is not found.");
-            return "error";
-        }
+        UserDto userDto = userService.getUserById(id);
+        model.addAttribute("user", userDto);
+        return "user/getUser";
     }
 
     @GetMapping("/create")
@@ -66,15 +58,10 @@ public class UserController {
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public String createUser(Model model, @RequestParam Map<String, Object> params, HttpSession session) {
-        try {
-            UserDto userDto = setUserDto(params);
-            UserDto created = userService.saveUser(userDto);
-            session.setAttribute("user", created);
-            return "index";
-        } catch (UserException e) {
-            model.addAttribute("message", "This user is not created.");
-            return "error";
-        }
+        UserDto userDto = setUserDto(params);
+        UserDto created = userService.saveUser(userDto);
+        session.setAttribute("user", created);
+        return "index";
 
     }
 
@@ -98,28 +85,18 @@ public class UserController {
 
     @PostMapping("/{id}")
     public String updateUser(Model model, @PathVariable Long id, @RequestParam Map<String, Object> params) {
-        try {
-            UserDto userDto = setUserDto(params);
-            userDto.setId(id);
-            UserDto updated = userService.saveUser((userDto));
-            model.addAttribute("user", updated);
-            return "user/getUser";
-        } catch (UserException e) {
-            model.addAttribute("message", "User is not updated");
-            return "error";
-        }
+        UserDto userDto = setUserDto(params);
+        userDto.setId(id);
+        UserDto updated = userService.saveUser((userDto));
+        model.addAttribute("user", updated);
+        return "user/getUser";
     }
 
     @PostMapping("/delete/{id}")
     public String deleteUser(Model model, @PathVariable Long id) {
-        try {
-            userService.deleteUser(id);
-            model.addAttribute("message", "The user with id " + id + " is successfully deleted.");
-            return "delete";
-        } catch (UserException e) {
-            model.addAttribute("message", "The user is not deleted.");
-            return "error";
-        }
+        userService.deleteUser(id);
+        model.addAttribute("message", "The user with id " + id + " is successfully deleted.");
+        return "delete";
     }
 
     @GetMapping("/login")

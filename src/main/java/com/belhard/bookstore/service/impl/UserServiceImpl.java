@@ -3,6 +3,9 @@ package com.belhard.bookstore.service.impl;
 import com.belhard.bookstore.dao.UserDao;
 import com.belhard.bookstore.dao.entity.User;
 import com.belhard.bookstore.dao.repository.UserRepository;
+import com.belhard.bookstore.exceptions.CreatingException;
+import com.belhard.bookstore.exceptions.DeleteException;
+import com.belhard.bookstore.exceptions.NullResultException;
 import com.belhard.bookstore.exceptions.UserException;
 import com.belhard.bookstore.service.UserService;
 import com.belhard.bookstore.service.dto.UserDto;
@@ -59,7 +62,7 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserById(Long id) {
         logger.debug("Call method getUserById");
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserException("There is no book with id " + id));
+                .orElseThrow(() -> new NullResultException("There is no book with id " + id));
         return toDto(user);
     }
 
@@ -67,7 +70,7 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserByEmail(String email) {
         logger.debug("Call method getUserByEmail");
         User user = userRepository.findUserByEmail(email)
-                .orElseThrow(() -> new UserException("There is no user with email " + email));
+                .orElseThrow(() -> new NullResultException("There is no user with email " + email));
         return toDto(user);
     }
 
@@ -89,8 +92,8 @@ public class UserServiceImpl implements UserService {
             User createdUser = userRepository.save(toUser(userDto));
             UserDto createdUserDto = toDto(createdUser);
             return getUserById(createdUserDto.getId());
-        } catch (IllegalArgumentException e) {
-            throw new UserException("The user is not created");
+        } catch (RuntimeException e) {
+            throw new CreatingException("The user is not created");
         }
     }
 
@@ -103,7 +106,7 @@ public class UserServiceImpl implements UserService {
         if (userDto.getEmail().matches("\\w+@[a-z]+\\.[a-z]+")) {
             user.setEmail(userDto.getEmail());
         } else {
-            throw new UserException("Illegal input of email.");
+            throw new CreatingException("Illegal input of email.");
         }
         user.setPassword(EncryptorUtil.encrypt(userDto.getPassword()));
         user.setBirthday(userDto.getBirthday());
@@ -116,7 +119,7 @@ public class UserServiceImpl implements UserService {
         try {
             userRepository.softDelete(id);
         } catch (QueryExecutionRequestException e) {
-            throw new UserException("The user with id " + id + " is not created.");
+            throw new DeleteException("The user with id " + id + " is not deleted.");
         }
     }
 

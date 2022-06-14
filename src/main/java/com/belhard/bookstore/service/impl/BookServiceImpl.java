@@ -2,8 +2,7 @@ package com.belhard.bookstore.service.impl;
 
 import com.belhard.bookstore.dao.entity.Book;
 import com.belhard.bookstore.dao.repository.BookRepository;
-import com.belhard.bookstore.exceptions.BookException;
-import com.belhard.bookstore.exceptions.UserException;
+import com.belhard.bookstore.exceptions.*;
 import com.belhard.bookstore.service.BookService;
 import com.belhard.bookstore.service.dto.BookDto;
 import org.apache.logging.log4j.LogManager;
@@ -49,7 +48,7 @@ public class BookServiceImpl implements BookService {
     public BookDto getBookById(Long id) {
         logger.debug("Call method getBookById");
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new UserException("There is no book with id " + id));
+                .orElseThrow(() -> new NullResultException("There is no book with id " + id));
         return toDto(book);
     }
 
@@ -57,7 +56,7 @@ public class BookServiceImpl implements BookService {
     public BookDto getBookByIsbn(String isbn) {
         logger.debug("Call method getBookByIsbn");
         Book book = bookRepository.findBookByIsbn(isbn)
-                .orElseThrow(() -> new UserException("There is no user with isbn " + isbn));
+                .orElseThrow(() -> new NullResultException("There is no user with isbn " + isbn));
         return toDto(book);
     }
 
@@ -92,8 +91,8 @@ public class BookServiceImpl implements BookService {
             Book createdBook = bookRepository.save(toBook(bookDto));
             BookDto createdBookDto = toDto(createdBook);
             return getBookById(createdBookDto.getId());
-        } catch (IllegalArgumentException e) {
-            throw new BookException("The book is not created");
+        } catch (RuntimeException e) {
+            throw new CreatingException("The book is not created");
         }
     }
 
@@ -119,7 +118,7 @@ public class BookServiceImpl implements BookService {
         try {
             bookRepository.softDelete(id);
         } catch (QueryExecutionRequestException e) {
-            throw new BookException("The book with id " + id + " was not deleted");
+            throw new DeleteException("The book with id " + id + " was not deleted");
         }
     }
 
@@ -134,7 +133,7 @@ public class BookServiceImpl implements BookService {
         logger.debug("Call method countPriceByAuthor");
         List<BookDto> dtos = getBookByAuthor(author);
         if (dtos.isEmpty()) {
-            throw new BookException("There is no books with such author: " + author);
+            throw new NullResultException("There is no books with such author: " + author);
         }
         BigDecimal allPrice = BigDecimal.ZERO;
         for (BookDto bookDto : dtos) {
