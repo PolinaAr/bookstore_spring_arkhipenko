@@ -1,4 +1,4 @@
-package com.belhard.bookstore.util;
+package com.belhard.bookstore.controller.util;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

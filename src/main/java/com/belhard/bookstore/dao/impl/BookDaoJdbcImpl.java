@@ -2,7 +2,7 @@ package com.belhard.bookstore.dao.impl;
 
 import com.belhard.bookstore.dao.BookDao;
 import com.belhard.bookstore.dao.entity.Book;
-import com.belhard.bookstore.exceptions.BookException;
+import com.belhard.bookstore.service.exceptions.BookException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;

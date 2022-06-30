@@ -1,4 +1,4 @@
-package com.belhard.bookstore.util;
+package com.belhard.bookstore.service.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

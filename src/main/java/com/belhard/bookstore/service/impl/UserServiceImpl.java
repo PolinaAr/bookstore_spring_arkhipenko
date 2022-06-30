@@ -1,15 +1,13 @@
 package com.belhard.bookstore.service.impl;
 
-import com.belhard.bookstore.dao.UserDao;
 import com.belhard.bookstore.dao.entity.User;
 import com.belhard.bookstore.dao.repository.UserRepository;
-import com.belhard.bookstore.exceptions.CreatingException;
-import com.belhard.bookstore.exceptions.DeleteException;
-import com.belhard.bookstore.exceptions.NullResultException;
-import com.belhard.bookstore.exceptions.UserException;
 import com.belhard.bookstore.service.UserService;
 import com.belhard.bookstore.service.dto.UserDto;
-import com.belhard.bookstore.util.EncryptorUtil;
+import com.belhard.bookstore.service.exceptions.CreatingException;
+import com.belhard.bookstore.service.exceptions.DeleteException;
+import com.belhard.bookstore.service.exceptions.NullResultException;
+import com.belhard.bookstore.service.util.EncryptorUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.hql.internal.QueryExecutionRequestException;
@@ -27,11 +25,8 @@ public class UserServiceImpl implements UserService {
     private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
     private UserRepository userRepository;
 
-    public UserServiceImpl() {
-    }
-
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

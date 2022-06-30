@@ -1,10 +1,9 @@
 package com.belhard.bookstore.controller;
 
-import com.belhard.bookstore.exceptions.OrderException;
 import com.belhard.bookstore.service.OrderService;
 import com.belhard.bookstore.service.dto.OrderDto;
 import com.belhard.bookstore.service.dto.OrderItemDto;
-import com.belhard.bookstore.util.ParamReader;
+import com.belhard.bookstore.controller.util.ParamReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -18,14 +17,11 @@ import java.util.Map;
 @RequestMapping("/orders")
 public class OrderController {
 
-    private OrderService orderService;
+    private final OrderService orderService;
     private ParamReader paramReader;
 
-    public OrderController() {
-    }
-
     @Autowired
-    public void setOrderService(OrderService orderService) {
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 

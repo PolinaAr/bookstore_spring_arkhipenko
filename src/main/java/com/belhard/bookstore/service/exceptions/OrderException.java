@@ -1,4 +1,4 @@
-package com.belhard.bookstore.exceptions;
+package com.belhard.bookstore.service.exceptions;
 
 public class OrderException extends RuntimeException {
 

@@ -2,9 +2,12 @@ package com.belhard.bookstore.service.impl;
 
 import com.belhard.bookstore.dao.entity.Book;
 import com.belhard.bookstore.dao.repository.BookRepository;
-import com.belhard.bookstore.exceptions.*;
 import com.belhard.bookstore.service.BookService;
 import com.belhard.bookstore.service.dto.BookDto;
+import com.belhard.bookstore.service.exceptions.BookException;
+import com.belhard.bookstore.service.exceptions.CreatingException;
+import com.belhard.bookstore.service.exceptions.DeleteException;
+import com.belhard.bookstore.service.exceptions.NullResultException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.hql.internal.QueryExecutionRequestException;
@@ -20,15 +23,12 @@ import java.util.List;
 @Service("bookService")
 public class BookServiceImpl implements BookService {
 
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
     private static final Logger logger = LogManager.getLogger(BookServiceImpl.class);
 
-    public BookServiceImpl() {
-    }
-
     @Autowired
-    public void setBookRepository(BookRepository bookRepository) {
+    public BookServiceImpl(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 

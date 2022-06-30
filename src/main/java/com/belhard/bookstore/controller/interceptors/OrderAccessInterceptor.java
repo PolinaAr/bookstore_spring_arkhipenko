@@ -1,4 +1,4 @@
-package com.belhard.bookstore.interceptors;
+package com.belhard.bookstore.controller.interceptors;
 
 import com.belhard.bookstore.service.dto.UserDto;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @Component
-public class UsersAccessInterceptor implements HandlerInterceptor {
+public class OrderAccessInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -19,7 +19,7 @@ public class UsersAccessInterceptor implements HandlerInterceptor {
             response.sendRedirect("/users/login");
             return false;
         }
-        if (userDto.getRole().equals(UserDto.Role.ADMIN)) {
+        if (userDto.getRole().equals(UserDto.Role.ADMIN) || userDto.getRole().equals(UserDto.Role.MANAGER)) {
             return true;
         }
         response.sendError(401);

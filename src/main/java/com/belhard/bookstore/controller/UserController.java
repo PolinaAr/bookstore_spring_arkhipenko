@@ -2,7 +2,7 @@ package com.belhard.bookstore.controller;
 
 import com.belhard.bookstore.service.UserService;
 import com.belhard.bookstore.service.dto.UserDto;
-import com.belhard.bookstore.util.ParamReader;
+import com.belhard.bookstore.controller.util.ParamReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,14 +19,11 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
     private ParamReader paramReader;
 
-    public UserController() {
-    }
-
     @Autowired
-    public void setUserService(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
